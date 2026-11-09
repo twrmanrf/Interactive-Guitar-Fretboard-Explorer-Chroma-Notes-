@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)file:///C:/Users/snico/Downloads/gemini-code-1794202633789.html -->
+<html lang="en" class="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guitar Fretboard Explorer (Chroma-Notes™)</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="./Interactive Guitar Fretboard Explorer (Chroma-Notes™)_files/saved_resource"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        fretboard: '#1c1613',
+                        fretwood: '#2a1f1a',
+                        fretline: '#d1d5db',
+                        nut: '#e5e7eb',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="./Interactive Guitar Fretboard Explorer (Chroma-Notes™)_files/all.min.css">
+    
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./Interactive Guitar Fretboard Explorer (Chroma-Notes™)_files/css2" rel="stylesheet">
+    
+    <!-- html2canvas CDN for Image Exports -->
+    <script src="./Interactive Guitar Fretboard Explorer (Chroma-Notes™)_files/html2canvas.min.js.download"></script>
+    <!-- jsPDF CDN for Vector PDF Exports -->
+    <script src="./Interactive Guitar Fretboard Explorer (Chroma-Notes™)_files/jspdf.umd.min.js.download"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f17;
+            color: #f3f4f6;
+        }
+        
+        /* Custom Fretboard Scrollbar */
+        .fretboard-scroll::-webkit-scrollbar {
+            height: 10px;
+        }
+        .fretboard-scroll::-webkit-scrollbar-track {
+            background: #111827;
+            border-radius: 5px;
+        }
+        .fretboard-scroll::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 5px;
+        }
+        .fretboard-scroll::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        /* Fretboard Texture & Metallic Highlights */
+        .fretboard-neck {
+            background: linear-gradient(180deg, #2b1d16 0%, #17110e 50%, #2b1d16 100%);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.85), 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+        }
+
+        .fret-wire {
+            box-shadow: 1px 0 2px rgba(255,255,255,0.25), -1px 0 2px rgba(0,0,0,0.8);
+        }
+
+        .string-line {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Animated Interactive Note Markers */
+        .note-dot {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s, box-shadow 0.2s;
+        }
+        .note-dot:hover {
+            transform: scale(1.22);
+            z-index: 45 !important;
+        }
+
+        /* Glassmorphism Panel Styling */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Glowing Root Pulse Effect */
+        @keyframes rootPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); }
+            50% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0); }
+        }
+        .root-pulse {
+            animation: rootPulse 2s infinite;
+        }
+
+        /* Circle of Fifths Styling */
+        .circle-sector {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .circle-sector:hover {
+            opacity: 0.85;
+            filter: brightness(1.2);
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.-bottom-10{bottom:-2.5rem}.-right-10{right:-2.5rem}.bottom-4{bottom:1rem}.right-4{right:1rem}.top-0{top:0px}.left-28{left:7rem}.right-0{right:0px}.z-40{z-index:40}.z-50{z-index:50}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.ml-3{margin-left:0.75rem}.mr-1{margin-right:0.25rem}.mr-1\.5{margin-right:0.375rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-16{height:4rem}.h-2\.5{height:0.625rem}.h-4{height:1rem}.h-48{height:12rem}.h-5{height:1.25rem}.h-full{height:100%}.h-11{height:2.75rem}.h-6{height:1.5rem}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-16{width:4rem}.w-2\.5{width:0.625rem}.w-48{width:12rem}.w-9{width:2.25rem}.w-full{width:100%}.w-px{width:1px}.w-12{width:3rem}.w-28{width:7rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.min-w-\[1080px\]{min-width:1080px}.min-w-\[2\.1rem\]{min-width:2.1rem}.max-w-7xl{max-width:80rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.self-center{align-self:center}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-r-2{border-right-width:2px}.border-r-4{border-right-width:4px}.border-gray-500{--tw-border-opacity:1;border-color:rgb(107 114 128 / var(--tw-border-opacity, 1))}.border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-gray-700\/80{border-color:rgb(55 65 81 / 0.8)}.border-gray-800{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-gray-800\/80{border-color:rgb(31 41 55 / 0.8)}.border-indigo-500\/50{border-color:rgb(99 102 241 / 0.5)}.border-indigo-700\/60{border-color:rgb(67 56 202 / 0.6)}.border-indigo-800\/50{border-color:rgb(55 48 163 / 0.5)}.border-rose-500\/30{border-color:rgb(244 63 94 / 0.3)}.border-rose-700\/60{border-color:rgb(190 18 60 / 0.6)}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-500\/60{border-color:rgb(107 114 128 / 0.6)}.border-gray-800\/40{border-color:rgb(31 41 55 / 0.4)}.border-gray-900{--tw-border-opacity:1;border-color:rgb(17 24 39 / var(--tw-border-opacity, 1))}.border-rose-500{--tw-border-opacity:1;border-color:rgb(244 63 94 / var(--tw-border-opacity, 1))}.border-rose-500\/50{border-color:rgb(244 63 94 / 0.5)}.border-yellow-500\/80{border-color:rgb(234 179 8 / 0.8)}.border-indigo-500\/30{border-color:rgb(99 102 241 / 0.3)}.border-indigo-700\/50{border-color:rgb(67 56 202 / 0.5)}.bg-\[\#06b6d4\]{--tw-bg-opacity:1;background-color:rgb(6 182 212 / var(--tw-bg-opacity, 1))}.bg-\[\#10b981\]{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-\[\#3b82f6\]{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-\[\#6366f1\]{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.bg-\[\#84cc16\]{--tw-bg-opacity:1;background-color:rgb(132 204 22 / var(--tw-bg-opacity, 1))}.bg-\[\#a855f7\]{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-\[\#eab308\]{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-\[\#ec4899\]{--tw-bg-opacity:1;background-color:rgb(236 72 153 / var(--tw-bg-opacity, 1))}.bg-\[\#ef4444\]{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-\[\#f59e0b\]{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-\[\#f97316\]{--tw-bg-opacity:1;background-color:rgb(249 115 22 / var(--tw-bg-opacity, 1))}.bg-\[\#facc15\]{--tw-bg-opacity:1;background-color:rgb(250 204 21 / var(--tw-bg-opacity, 1))}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-gray-900\/60{background-color:rgb(17 24 39 / 0.6)}.bg-gray-900\/90{background-color:rgb(17 24 39 / 0.9)}.bg-gray-900\/95{background-color:rgb(17 24 39 / 0.95)}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-indigo-950\/60{background-color:rgb(30 27 75 / 0.6)}.bg-indigo-950\/70{background-color:rgb(30 27 75 / 0.7)}.bg-rose-500\/20{background-color:rgb(244 63 94 / 0.2)}.bg-rose-600\/10{background-color:rgb(225 29 72 / 0.1)}.bg-rose-950\/70{background-color:rgb(76 5 25 / 0.7)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-gray-500\/70{background-color:rgb(107 114 128 / 0.7)}.bg-gray-950\/80{background-color:rgb(3 7 18 / 0.8)}.bg-indigo-400\/80{background-color:rgb(129 140 248 / 0.8)}.bg-rose-500\/30{background-color:rgb(244 63 94 / 0.3)}.bg-rose-600\/30{background-color:rgb(225 29 72 / 0.3)}.bg-rose-900\/80{background-color:rgb(136 19 55 / 0.8)}.bg-indigo-500\/20{background-color:rgb(99 102 241 / 0.2)}.bg-indigo-950\/80{background-color:rgb(30 27 75 / 0.8)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.from-emerald-600{--tw-gradient-from:#059669 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 150 105 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-rose-600{--tw-gradient-from:#e11d48 var(--tw-gradient-from-position);--tw-gradient-to:rgb(225 29 72 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gray-300{--tw-gradient-from:#d1d5db var(--tw-gradient-from-position);--tw-gradient-to:rgb(209 213 219 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-amber-500{--tw-gradient-to:rgb(245 158 11 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #f59e0b var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-gray-400{--tw-gradient-to:rgb(156 163 175 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #9ca3af var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-emerald-500{--tw-gradient-to:#10b981 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7c3aed var(--tw-gradient-to-position)}.to-gray-300{--tw-gradient-to:#d1d5db var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-12{padding-bottom:3rem}.pb-1{padding-bottom:0.25rem}.pb-4{padding-bottom:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.font-black{font-weight:900}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252 / var(--tw-text-opacity, 1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-75{opacity:0.75}.opacity-90{opacity:0.9}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-900\/30{--tw-shadow-color:rgb(6 78 59 / 0.3);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-500\/30{--tw-shadow-color:rgb(99 102 241 / 0.3);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-900\/30{--tw-shadow-color:rgb(49 46 129 / 0.3);--tw-shadow:var(--tw-shadow-colored)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-rose-500{--tw-ring-opacity:1;--tw-ring-color:rgb(244 63 94 / var(--tw-ring-opacity, 1))}.ring-white{--tw-ring-opacity:1;--tw-ring-color:rgb(255 255 255 / var(--tw-ring-opacity, 1))}.blur-3xl{--tw-blur:blur(64px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow{--tw-drop-shadow:drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-md{--tw-drop-shadow:drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.selection\:bg-indigo-500 *::selection{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-indigo-500::selection{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.after\:absolute::after{content:var(--tw-content);position:absolute}.after\:left-\[16px\]::after{content:var(--tw-content);left:16px}.after\:top-\[12px\]::after{content:var(--tw-content);top:12px}.after\:h-4::after{content:var(--tw-content);height:1rem}.after\:w-4::after{content:var(--tw-content);width:1rem}.after\:rounded-full::after{content:var(--tw-content);border-radius:9999px}.after\:border::after{content:var(--tw-content);border-width:1px}.after\:border-gray-300::after{content:var(--tw-content);--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.after\:bg-white::after{content:var(--tw-content);--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.after\:transition-all::after{content:var(--tw-content);transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.after\:content-\[\'\'\]::after{--tw-content:'';content:var(--tw-content)}.hover\:border-rose-800:hover{--tw-border-opacity:1;border-color:rgb(159 18 57 / var(--tw-border-opacity, 1))}.hover\:border-indigo-400:hover{--tw-border-opacity:1;border-color:rgb(129 140 248 / var(--tw-border-opacity, 1))}.hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-800:hover{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-900:hover{--tw-bg-opacity:1;background-color:rgb(49 46 129 / var(--tw-bg-opacity, 1))}.hover\:bg-rose-900:hover{--tw-bg-opacity:1;background-color:rgb(136 19 55 / var(--tw-bg-opacity, 1))}.hover\:bg-rose-950\/40:hover{background-color:rgb(76 5 25 / 0.4)}.hover\:from-emerald-500:hover{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:from-indigo-500:hover{--tw-gradient-from:#6366f1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(99 102 241 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-teal-500:hover{--tw-gradient-to:#14b8a6 var(--tw-gradient-to-position)}.hover\:to-violet-500:hover{--tw-gradient-to:#8b5cf6 var(--tw-gradient-to-position)}.hover\:text-rose-300:hover{--tw-text-opacity:1;color:rgb(253 164 175 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241 / var(--tw-ring-opacity, 1))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.peer:checked ~ .peer-checked\:bg-rose-600{--tw-bg-opacity:1;background-color:rgb(225 29 72 / var(--tw-bg-opacity, 1))}.peer:checked ~ .peer-checked\:text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.peer:checked ~ .peer-checked\:after\:translate-x-full::after{content:var(--tw-content);--tw-translate-x:100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.peer:checked ~ .peer-checked\:after\:border-white::after{content:var(--tw-content);--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.peer:focus ~ .peer-focus\:outline-none{outline:2px solid transparent;outline-offset:2px}@media (min-width: 640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:h-56{height:14rem}.sm\:w-56{width:14rem}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:p-6{padding:1.5rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}}@media (min-width: 768px){.md\:col-span-5{grid-column:span 5 / span 5}.md\:col-span-7{grid-column:span 7 / span 7}.md\:inline{display:inline}.md\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.md\:border-b-0{border-bottom-width:0px}.md\:border-r{border-right-width:1px}.md\:p-5{padding:1.25rem}.md\:pb-0{padding-bottom:0px}.md\:pr-6{padding-right:1.5rem}}@media (min-width: 1024px){.lg\:col-span-3{grid-column:span 3 / span 3}.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-indigo-500 selection:text-white pb-12">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-gray-800 bg-gray-900/90 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            
+            <!-- App Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 via-amber-500 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-guitar text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                        FretLab Studio <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold tracking-wider">CHROMA</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">Interactive Guitar Fretboard • Chroma-Notes™ Colored Harmony Explorer</p>
+                </div>
+            </div>
+
+            <!-- Header Action Controls (Export, Play, Audio) -->
+            <div class="flex items-center gap-2">
+                <!-- Strum Chord Button -->
+                <button id="strum-btn" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-emerald-900/30 transition-all flex items-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-play text-xs"></i>
+                    <span class="hidden sm:inline">Strum</span>
+                </button>
+
+                <!-- Arpeggiate Button -->
+                <button id="arpeggiate-btn" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold py-2 px-3.5 rounded-xl shadow-lg shadow-indigo-900/30 transition-all flex items-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-water text-xs"></i>
+                    <span class="hidden sm:inline">Arpeggiate</span>
+                </button>
+
+                <!-- Dedicated Silence / Mute Toggle Button -->
+                <button id="mute-toggle-btn" class="bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700 text-xs font-bold py-2 px-3.5 rounded-xl transition-all flex items-center gap-2 active:scale-95">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span id="mute-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span id="mute-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <i id="mute-icon" class="fa-solid fa-volume-high text-sm"></i>
+                    <span id="mute-text" class="hidden md:inline">Audio ON</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application Body -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
+
+        <!-- Exportable Card Area Wrapper -->
+        <div id="exportable-area" class="space-y-6">
+            
+            <!-- Live Chord Recognition & Analysis Banner -->
+            <div class="glass-panel rounded-2xl p-5 shadow-2xl relative overflow-hidden border border-gray-800">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    
+                    <!-- Primary Detected Chord Card -->
+                    <div class="md:col-span-5 flex items-center gap-4 border-b md:border-b-0 md:border-r border-gray-800 pb-4 md:pb-0 md:pr-6">
+                        <div id="chord-badge-box" class="w-16 h-16 rounded-2xl border flex flex-col items-center justify-center font-bold shrink-0 shadow-lg text-gray-900" style="background-color: rgb(6, 182, 212); border-color: rgb(6, 182, 212);">
+                            <span id="chord-badge-root" class="text-2xl leading-none drop-shadow">C</span>
+                            <span id="chord-badge-type" class="text-[9px] uppercase font-bold mt-1 opacity-90">Major Triad</span>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] uppercase tracking-wider text-gray-400 font-medium">Selected / Detected Chord</span>
+                                <span id="designated-root-badge" class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
+                                    Root: <span id="root-badge-note">Auto</span>
+                                </span>
+                            </div>
+                            <h2 id="chord-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2 mt-0.5">Cmaj/G</h2>
+                            <div id="chord-subtitle" class="text-xs text-indigo-300 font-medium mt-1 flex items-center gap-2">
+                                <i class="fa-solid fa-palette text-rose-400 text-xs"></i>
+                                <span id="chord-subtitle-text">Right-click or Shift-click any note to set Root Note • Click Nut to Mute/Add Note</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Structural Harmonic Analysis Grid -->
+                    <div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800/80">
+                            <div class="text-[11px] text-gray-400 font-medium uppercase mb-1">Quality</div>
+                            <div id="info-quality" class="text-sm font-semibold text-gray-200">Major Triad</div>
+                        </div>
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800/80">
+                            <div class="text-[11px] text-gray-400 font-medium uppercase mb-1">Bass Note</div>
+                            <div id="info-bass" class="text-sm font-semibold text-gray-200">G</div>
+                        </div>
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800/80">
+                            <div class="text-[11px] text-gray-400 font-medium uppercase mb-1">Pitches Present</div>
+                            <div id="info-pitches" class="text-sm font-semibold text-indigo-300 truncate">C, E, G</div>
+                        </div>
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800/80">
+                            <div class="text-[11px] text-gray-400 font-medium uppercase mb-1">Interval Formula</div>
+                            <div id="info-formula" class="text-sm font-semibold text-amber-400 truncate">1 - 3 - 5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alternate Chord Interpretations List -->
+                <div id="alt-chords-container" class="mt-4 pt-3 border-t border-gray-800/80 flex items-center gap-2 overflow-x-auto text-xs hidden">
+                    <span class="text-gray-400 font-medium shrink-0"><i class="fa-solid fa-arrows-split-up-and-left text-gray-500 mr-1"></i> Alternate Interpretations:</span>
+                    <div id="alt-chords-list" class="flex items-center gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Interactive Guitar Fretboard Neck -->
+            <div class="glass-panel rounded-2xl p-4 sm:p-6 border border-gray-800 shadow-2xl relative">
+                
+                <!-- Chroma-Notes™ Color Legend -->
+                <div class="flex flex-wrap items-center justify-between mb-4 gap-2 text-xs text-gray-400">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-[11px] font-bold text-gray-300 uppercase tracking-wider mr-1">Chroma-Notes™:</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#ef4444]">C</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#f97316]">C#/Db</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-900 bg-[#f59e0b]">D</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-900 bg-[#eab308]">D#/Eb</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-900 bg-[#facc15]">E</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-900 bg-[#84cc16]">F</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#10b981]">F#/Gb</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-gray-900 bg-[#06b6d4]">G</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#3b82f6]">G#/Ab</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#6366f1]">A</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#a855f7]">A#/Bb</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white bg-[#ec4899]">B</span>
+                    </div>
+                    <div class="text-indigo-300 font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                        <span>Click Nut (Nut / Fret 0) or String Badge to Mute/Add Note!</span>
+                    </div>
+                </div>
+
+                <!-- Fretboard Horizontal Scroll Area -->
+                <div class="fretboard-scroll overflow-x-auto pb-4 pt-2">
+                    <div id="fretboard-container" class="min-w-[1080px] relative select-none"><div class="fretboard-neck rounded-2xl overflow-hidden border border-gray-900 shadow-2xl relative flex flex-col"><div class="flex border-b border-gray-800 bg-gray-900/90 text-gray-400 text-xs font-semibold py-1.5"><div class="w-28 shrink-0 px-3 text-center text-gray-400 uppercase text-[10px] font-bold tracking-wider self-center">String</div><div class="flex-1 text-center font-mono w-12 shrink-0 border-r-2 border-yellow-500/80 text-yellow-400 font-bold">Nut</div><div class="flex-1 text-center font-mono ">1</div><div class="flex-1 text-center font-mono ">2</div><div class="flex-1 text-center font-mono ">3</div><div class="flex-1 text-center font-mono ">4</div><div class="flex-1 text-center font-mono ">5</div><div class="flex-1 text-center font-mono ">6</div><div class="flex-1 text-center font-mono ">7</div><div class="flex-1 text-center font-mono ">8</div><div class="flex-1 text-center font-mono ">9</div><div class="flex-1 text-center font-mono ">10</div><div class="flex-1 text-center font-mono ">11</div><div class="flex-1 text-center font-mono ">12</div><div class="flex-1 text-center font-mono ">13</div><div class="flex-1 text-center font-mono ">14</div><div class="flex-1 text-center font-mono ">15</div><div class="flex-1 text-center font-mono ">16</div><div class="flex-1 text-center font-mono ">17</div><div class="flex-1 text-center font-mono ">18</div></div><div class="flex items-center h-11 relative border-b border-gray-800/40"><div class="w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 text-gray-500">
+                    <span class="text-xs font-semibold tracking-tight truncate">1 (e)</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/50">
+                        X
+                    </span>
+                </div><div class="absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line" style="height: 4.5px;"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div></div><div class="flex items-center h-11 relative border-b border-gray-800/40"><div class="w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 text-gray-500">
+                    <span class="text-xs font-semibold tracking-tight truncate">2 (B)</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/50">
+                        X
+                    </span>
+                </div><div class="absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line" style="height: 3.91667px;"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div></div><div class="flex items-center h-11 relative border-b border-gray-800/40"><div class="w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 text-gray-500">
+                    <span class="text-xs font-semibold tracking-tight truncate">3 (G)</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/50">
+                        X
+                    </span>
+                </div><div class="absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line" style="height: 3.33333px;"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div></div><div class="flex items-center h-11 relative border-b border-gray-800/40"><div class="w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 text-gray-500">
+                    <span class="text-xs font-semibold tracking-tight truncate">4 (D)</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/50">
+                        X
+                    </span>
+                </div><div class="absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line" style="height: 2.75px;"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold " style="background-color: rgb(250, 204, 21); box-shadow: rgba(250, 204, 21, 0.4) 0px 3px 8px;"><span>E</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">6</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold ring-2 ring-white root-pulse" style="background-color: rgb(6, 182, 212); box-shadow: rgba(6, 182, 212, 0.4) 0px 3px 8px;"><span>G</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">1</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-white font-extrabold " style="background-color: rgb(239, 68, 68); box-shadow: rgba(239, 68, 68, 0.4) 0px 3px 8px;"><span>C</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">4</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold " style="background-color: rgb(250, 204, 21); box-shadow: rgba(250, 204, 21, 0.4) 0px 3px 8px;"><span>E</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">6</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold ring-2 ring-white root-pulse" style="background-color: rgb(6, 182, 212); box-shadow: rgba(6, 182, 212, 0.4) 0px 3px 8px;"><span>G</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">1</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div></div><div class="flex items-center h-11 relative border-b border-gray-800/40"><div class="w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 text-gray-500">
+                    <span class="text-xs font-semibold tracking-tight truncate">5 (A)</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/50">
+                        X
+                    </span>
+                </div><div class="absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line" style="height: 2.16667px;"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-white font-extrabold " style="background-color: rgb(239, 68, 68); box-shadow: rgba(239, 68, 68, 0.4) 0px 3px 8px;"><span>C</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">4</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold " style="background-color: rgb(250, 204, 21); box-shadow: rgba(250, 204, 21, 0.4) 0px 3px 8px;"><span>E</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">6</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold ring-2 ring-white root-pulse" style="background-color: rgb(6, 182, 212); box-shadow: rgba(6, 182, 212, 0.4) 0px 3px 8px;"><span>G</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">1</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-white font-extrabold " style="background-color: rgb(239, 68, 68); box-shadow: rgba(239, 68, 68, 0.4) 0px 3px 8px;"><span>C</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">4</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div></div><div class="flex items-center h-11 relative border-b border-gray-800/40"><div class="w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 text-gray-500">
+                    <span class="text-xs font-semibold tracking-tight truncate">6 (E)</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-600/30 text-rose-300 border border-rose-500/50">
+                        X
+                    </span>
+                </div><div class="absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line" style="height: 1.58333px;"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold ring-2 ring-white root-pulse" style="background-color: rgb(6, 182, 212); box-shadow: rgba(6, 182, 212, 0.4) 0px 3px 8px;"><span>G</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">1</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-white font-extrabold " style="background-color: rgb(239, 68, 68); box-shadow: rgba(239, 68, 68, 0.4) 0px 3px 8px;"><span>C</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">4</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold " style="background-color: rgb(250, 204, 21); box-shadow: rgba(250, 204, 21, 0.4) 0px 3px 8px;"><span>E</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">6</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"><div class="px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight rounded-full flex items-center justify-center shadow-lg note-dot z-30 text-gray-900 font-extrabold ring-2 ring-white root-pulse" style="background-color: rgb(6, 182, 212); box-shadow: rgba(6, 182, 212, 0.4) 0px 3px 8px;"><span>G</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">1</span></div></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div><div class="flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 border-r-2 border-gray-500/60 fret-wire"></div></div><div class="flex bg-gray-950/80 py-2 border-t border-gray-800"><div class="w-28 shrink-0"></div><div class="flex-1 flex justify-center items-center w-12 shrink-0"></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-indigo-400/80 shadow-inner inline-block mr-1"></span><span class="w-2.5 h-2.5 rounded-full bg-indigo-400/80 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div><div class="flex-1 flex justify-center items-center "><span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span></div><div class="flex-1 flex justify-center items-center "></div></div></div></div>
+                </div>
+
+                <!-- Capo Active Indicator Banner -->
+                <div id="capo-banner" class="mt-2 py-1.5 px-3 rounded-lg bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 text-xs font-semibold flex items-center justify-between hidden">
+                    <span><i class="fa-solid fa-grip-lines-vertical mr-1.5 text-amber-400"></i> Capo Active on Fret <span id="capo-fret-num">1</span></span>
+                    <span class="text-[11px] text-indigo-400 font-normal">All open string pitches automatically shifted</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls & Configuration Toolbar -->
+        <div class="glass-panel rounded-2xl p-4 md:p-5 space-y-4 border border-gray-800">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
+                
+                <!-- Main Mode Selector -->
+                <div class="lg:col-span-3">
+                    <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Explorer Mode</label>
+                    <div class="flex items-center bg-gray-900 p-1 rounded-xl border border-gray-800">
+                        <button id="mode-custom-btn" class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-hand-pointer text-xs"></i>
+                            <span>Interactive Pick</span>
+                        </button>
+                        <button id="mode-chord-btn" class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-gray-400 hover:text-white flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-guitar text-xs"></i>
+                            <span>Chord Selector</span>
+                        </button>
+                        <button id="mode-theory-btn" class="flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-gray-400 hover:text-white flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap text-xs"></i>
+                            <span>Scales</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Pick Interaction Tools -->
+                <div id="custom-tools" class="lg:col-span-4 grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Click Tool Action</label>
+                        <select id="click-action-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="toggle">Toggle Note (Add/Remove)</option>
+                            <option value="root">Set as Root Note 🎯</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Polyphony</label>
+                        <select id="polyphony-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="single">Single Note / String (Chords)</option>
+                            <option value="multi">Multi Note / String (Scale Maps)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dedicated Chord Selector Controls -->
+                <div id="chord-selector-tools" class="lg:col-span-5 grid grid-cols-3 gap-2 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Chord Root</label>
+                        <select id="chord-root-select" class="w-full bg-gray-900 border border-indigo-500/50 text-indigo-300 font-bold text-xs rounded-xl px-2.5 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"><option value="0">C</option><option value="1">C#</option><option value="2">D</option><option value="3">D#</option><option value="4">E</option><option value="5">F</option><option value="6">F#</option><option value="7">G</option><option value="8">G#</option><option value="9">A</option><option value="10">A#</option><option value="11">B</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Chord Quality</label>
+                        <select id="chord-type-select" class="w-full bg-gray-900 border border-indigo-500/50 text-indigo-300 font-bold text-xs rounded-xl px-2.5 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"><option value="maj">Major (maj)</option><option value="m">Minor (min)</option><option value="7">Dominant 7th (7)</option><option value="maj7">Major 7th (M7)</option><option value="m7">Minor 7th (min7)</option><option value="5">Power Chord (5)</option><option value="add9">Add 9 (add9)</option><option value="dim">Diminished (°)</option><option value="aug">Augmented (+)</option><option value="sus2">Suspended 2nd (sus2)</option><option value="sus4">Suspended 4th (sus4)</option><option value="7sus2">7 Sus2 (7sus2)</option><option value="sus4_7">7 Sus4 (7sus4)</option><option value="6">Major 6th (6)</option><option value="m6">Minor 6th (min6)</option><option value="9">Dominant 9th (9)</option><option value="m9">Minor 9th (min9)</option><option value="m7b5">Half-Diminished (m7♭5)</option><option value="11">11th Chord (11)</option><option value="13">Dominant 13th (13)</option><option value="aug7">Augmented 7th (+7)</option><option value="dim7">Diminished 7th (°7)</option><option value="mMaj7">Minor Major 7th (minmaj7)</option><option value="sus9">Sus 9 (sus9)</option><option value="maj9">Major 9th (M9)</option><option value="7b9">7 Flat 9 (7♭9)</option><option value="7sharp9">7 Sharp 9 (7♯9)</option><option value="sus4_7_9">7sus4 9 (7sus4 9)</option><option value="maj7sharp11">Major 7 #11 (M7♯11)</option><option value="7sharp11">Dominant 7 #11 (7♯11)</option><option value="m11">Minor 11th (min11)</option><option value="maj13">Major 13th (M13)</option><option value="7b13">Dominant 7 b13 (7♭13)</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Display Mode</label>
+                        <select id="chord-mode-display" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-2.5 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="voicing">Playable Shape</option>
+                            <option value="all">All Neck Positions</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Theory Scale Preset Controls (Hidden by Default) -->
+                <div id="theory-controls" class="lg:col-span-4 grid grid-cols-3 gap-2 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Root</label>
+                        <select id="theory-root-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-2.5 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"><option value="0">C</option><option value="1">C#</option><option value="2">D</option><option value="3">D#</option><option value="4">E</option><option value="5">F</option><option value="6">F#</option><option value="7">G</option><option value="8">G#</option><option value="9">A</option><option value="10">A#</option><option value="11">B</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Category</label>
+                        <select id="theory-category-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-2.5 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="scales">Scales &amp; Modes</option>
+                            <option value="pentatonics">Pentatonics</option>
+                            <option value="triads">Triads</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Pattern</label>
+                        <select id="theory-pattern-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-2.5 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none"><option value="Major (Ionian)">Major (Ionian)</option><option value="Natural Minor (Aeolian)">Natural Minor (Aeolian)</option><option value="Dorian Mode">Dorian Mode</option><option value="Phrygian Mode">Phrygian Mode</option><option value="Lydian Mode">Lydian Mode</option><option value="Mixolydian Mode">Mixolydian Mode</option><option value="Locrian Mode">Locrian Mode</option><option value="Harmonic Minor">Harmonic Minor</option></select>
+                    </div>
+                </div>
+
+                <!-- Tuning, 13-Strings Toggle & Capo Settings -->
+                <div class="lg:col-span-4 grid grid-cols-3 gap-3">
+                    <div id="tuning-select-container">
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Tuning</label>
+                        <select id="tuning-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="standard">Standard (E A D G B E)</option>
+                            <option value="dropD">Drop D (D A D G B E)</option>
+                            <option value="halfStep">Half Step Down (Eb Ab...)</option>
+                            <option value="openG">Open G (D G D G B D)</option>
+                            <option value="openD">Open D (D A D F# A D)</option>
+                            <option value="dadgad">DADGAD</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col justify-between">
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">13-Strings Toggle</label>
+                        <label class="relative inline-flex items-center cursor-pointer h-10 bg-gray-900 border border-gray-700 rounded-xl px-3">
+                            <input type="checkbox" id="mode-13strings-toggle" class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[12px] after:left-[16px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600"></div>
+                            <span class="ml-3 text-xs font-bold text-rose-300 peer-checked:text-rose-400">13-Str 4ths</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Capo</label>
+                        <select id="capo-select" class="w-full bg-gray-900 border border-gray-700 text-white text-xs font-semibold rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="0">Open (No Capo)</option>
+                            <option value="1">Capo 1st Fret</option>
+                            <option value="2">Capo 2nd Fret</option>
+                            <option value="3">Capo 3rd Fret</option>
+                            <option value="4">Capo 4th Fret</option>
+                            <option value="5">Capo 5th Fret</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Second Control Row: Formatting, Actions & Exporting -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-800/80">
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Note Label Display Mode -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Display:</span>
+                        <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-800 text-xs">
+                            <button id="lbl-notes" class="px-2.5 py-1 rounded-lg font-semibold text-gray-400 hover:text-white">Notes</button>
+                            <button id="lbl-intervals" class="px-2.5 py-1 rounded-lg font-semibold text-gray-400 hover:text-white">Intervals</button>
+                            <button id="lbl-both" class="px-2.5 py-1 rounded-lg font-semibold bg-indigo-600 text-white">Note &amp; Interval</button>
+                            <button id="lbl-octaves" class="px-2.5 py-1 rounded-lg font-semibold text-gray-400 hover:text-white">Octaves</button>
+                            <button id="lbl-frets" class="px-2.5 py-1 rounded-lg font-semibold text-gray-400 hover:text-white">Frets</button>
+                        </div>
+                    </div>
+
+                    <!-- Sharp / Flat Toggle -->
+                    <button id="accidental-btn" class="bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all">
+                        Notation: <strong id="accidental-text" class="text-indigo-400">♯ Sharps</strong>
+                    </button>
+                </div>
+
+                <!-- Export & Fretboard Utility Actions -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Export Image / PDF Buttons -->
+                    <button id="export-jpg-btn" class="bg-indigo-950/70 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 text-xs font-semibold py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 shadow-md">
+                        <i class="fa-solid fa-file-image text-xs text-indigo-400"></i>
+                        <span>Export JPEG</span>
+                    </button>
+                    <button id="export-pdf-btn" class="bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-700/60 text-xs font-semibold py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 shadow-md">
+                        <i class="fa-solid fa-file-pdf text-xs text-rose-400"></i>
+                        <span>Export Vector PDF</span>
+                    </button>
+
+                    <div class="h-4 w-px bg-gray-800 mx-1 hidden sm:block"></div>
+
+                    <!-- Reset & Clear -->
+                    <button id="reset-root-btn" class="bg-gray-800 hover:bg-gray-700 text-rose-300 border border-gray-700 text-xs font-semibold py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left text-xs"></i>
+                        <span>Auto Root</span>
+                    </button>
+                    <button id="clear-fretboard-btn" class="bg-gray-800 hover:bg-rose-950/40 hover:text-rose-300 text-gray-300 border border-gray-700 hover:border-rose-800 text-xs font-semibold py-1.5 px-3 rounded-xl transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Lower Right Floating Circle of Fifths Widget (Chroma-Notes™ Standard) -->
+    <div id="circle-container" class="fixed bottom-4 right-4 z-40 bg-gray-900/95 backdrop-blur-md border border-gray-700/80 p-3 rounded-2xl shadow-2xl transition-all duration-300">
+        <div class="flex items-center justify-between gap-2 mb-2 pb-1 border-b border-gray-800">
+            <span class="text-[11px] font-bold text-gray-300 tracking-wider uppercase flex items-center gap-1.5">
+                <i class="fa-solid fa-compact-disc text-rose-400"></i> Circle of Fifths
+            </span>
+            <div class="flex items-center gap-1">
+                <button id="circle-minimize-btn" class="text-gray-400 hover:text-white text-xs px-1.5 py-0.5 rounded hover:bg-gray-800 transition-all">
+                    <i id="circle-min-icon" class="fa-solid fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+        <div id="circle-content" class="flex flex-col items-center hidden">
+            <div class="relative w-48 h-48 sm:w-56 sm:h-56">
+                <svg id="circle-svg" viewBox="0 0 300 300" class="w-full h-full drop-shadow-md"><path d="M 113.76533368564708 14.77038431953045 A 140 140 0 0 1 186.23466631435292 14.77038431953045 L 173.8113521494319 61.13482398140572 A 92 92 0 0 0 126.18864785056809 61.13482398140572 Z" class="circle-sector" fill="#ef4444" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 126.18864785056809 61.13482398140572 A 92 92 0 0 1 173.8113521494319 61.13482398140572 L 163.4585903453311 99.77185703296846 A 52 52 0 0 0 136.5414096546689 99.77185703296846 Z" class="circle-sector" fill="#6366f1" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="150" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">C</text><text x="150" y="81" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">Am</text><path d="M 186.23466631435292 14.77038431953045 A 140 140 0 0 1 248.99494936611666 51.00505063388336 L 215.0538238691624 84.94617613083763 A 92 92 0 0 0 173.8113521494319 61.13482398140572 Z" class="circle-sector" fill="#06b6d4" opacity="1.0" stroke="#ffffff" stroke-width="3.5"></path><path d="M 173.8113521494319 61.13482398140572 A 92 92 0 0 1 215.0538238691624 84.94617613083763 L 186.76955262170048 113.23044737829953 A 52 52 0 0 0 163.4585903453311 99.77185703296846 Z" class="circle-sector" fill="#facc15" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="208" y="53.54105316100511" text-anchor="middle" font-size="11" font-weight="800" fill="#111827" pointer-events="none">G</text><text x="186" y="90.64617092752042" text-anchor="middle" font-size="9" font-weight="700" fill="#111827" pointer-events="none">Em</text><path d="M 248.99494936611666 51.00505063388336 A 140 140 0 0 1 285.2296156804696 113.7653336856471 L 238.8651760185943 126.18864785056809 A 92 92 0 0 0 215.0538238691624 84.94617613083763 Z" class="circle-sector" fill="#f59e0b" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 215.0538238691624 84.94617613083763 A 92 92 0 0 1 238.8651760185943 126.18864785056809 L 200.22814296703154 136.5414096546689 A 52 52 0 0 0 186.76955262170048 113.23044737829953 Z" class="circle-sector" fill="#ec4899" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="250.4589468389949" y="96" text-anchor="middle" font-size="11" font-weight="800" fill="#111827" pointer-events="none">D</text><text x="212.35382907247958" y="117" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">Bm</text><path d="M 285.2296156804696 113.7653336856471 A 140 140 0 0 1 285.2296156804696 186.23466631435292 L 238.8651760185943 173.8113521494319 A 92 92 0 0 0 238.8651760185943 126.18864785056809 Z" class="circle-sector" fill="#6366f1" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 238.8651760185943 126.18864785056809 A 92 92 0 0 1 238.8651760185943 173.8113521494319 L 200.22814296703154 163.4585903453311 A 52 52 0 0 0 200.22814296703154 136.5414096546689 Z" class="circle-sector" fill="#10b981" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="266" y="154" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">A</text><text x="222" y="153" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">F#m</text><path d="M 285.2296156804696 186.23466631435292 A 140 140 0 0 1 248.99494936611666 248.99494936611666 L 215.0538238691624 215.0538238691624 A 92 92 0 0 0 238.8651760185943 173.8113521494319 Z" class="circle-sector" fill="#facc15" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 238.8651760185943 173.8113521494319 A 92 92 0 0 1 215.0538238691624 215.0538238691624 L 186.76955262170048 186.76955262170048 A 52 52 0 0 0 200.22814296703154 163.4585903453311 Z" class="circle-sector" fill="#f97316" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="250.4589468389949" y="212" text-anchor="middle" font-size="11" font-weight="800" fill="#111827" pointer-events="none">E</text><text x="212.35382907247958" y="189" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">C#m</text><path d="M 248.99494936611666 248.99494936611666 A 140 140 0 0 1 186.23466631435292 285.2296156804696 L 173.8113521494319 238.8651760185943 A 92 92 0 0 0 215.0538238691624 215.0538238691624 Z" class="circle-sector" fill="#ec4899" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 215.0538238691624 215.0538238691624 A 92 92 0 0 1 173.8113521494319 238.8651760185943 L 163.4585903453311 200.22814296703154 A 52 52 0 0 0 186.76955262170048 186.76955262170048 Z" class="circle-sector" fill="#3b82f6" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="208" y="254.4589468389949" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">B</text><text x="186" y="215.35382907247958" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">G#m</text><path d="M 186.23466631435292 285.2296156804696 A 140 140 0 0 1 113.76533368564708 285.2296156804696 L 126.18864785056809 238.8651760185943 A 92 92 0 0 0 173.8113521494319 238.8651760185943 Z" class="circle-sector" fill="#10b981" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 173.8113521494319 238.8651760185943 A 92 92 0 0 1 126.18864785056809 238.8651760185943 L 136.5414096546689 200.22814296703154 A 52 52 0 0 0 163.4585903453311 200.22814296703154 Z" class="circle-sector" fill="#eab308" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="150" y="270" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">F#</text><text x="150" y="225" text-anchor="middle" font-size="9" font-weight="700" fill="#111827" pointer-events="none">D#m</text><path d="M 113.76533368564708 285.2296156804696 A 140 140 0 0 1 51.00505063388336 248.99494936611666 L 84.94617613083763 215.0538238691624 A 92 92 0 0 0 126.18864785056809 238.8651760185943 Z" class="circle-sector" fill="#f97316" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 126.18864785056809 238.8651760185943 A 92 92 0 0 1 84.94617613083763 215.0538238691624 L 113.23044737829953 186.76955262170048 A 52 52 0 0 0 136.5414096546689 200.22814296703154 Z" class="circle-sector" fill="#a855f7" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="91.99999999999997" y="254.45894683899485" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">C#</text><text x="113.99999999999999" y="215.35382907247958" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">A#m</text><path d="M 51.00505063388336 248.99494936611666 A 140 140 0 0 1 14.77038431953045 186.23466631435295 L 61.13482398140573 173.81135214943194 A 92 92 0 0 0 84.94617613083763 215.0538238691624 Z" class="circle-sector" fill="#3b82f6" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 84.94617613083763 215.0538238691624 A 92 92 0 0 1 61.13482398140573 173.81135214943194 L 99.77185703296846 163.4585903453311 A 52 52 0 0 0 113.23044737829953 186.76955262170048 Z" class="circle-sector" fill="#84cc16" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="49.54105316100514" y="212.00000000000003" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">G#</text><text x="87.64617092752043" y="189.00000000000003" text-anchor="middle" font-size="9" font-weight="700" fill="#111827" pointer-events="none">Fm</text><path d="M 14.77038431953045 186.23466631435295 A 140 140 0 0 1 14.770384319530422 113.76533368564715 L 61.1348239814057 126.18864785056813 A 92 92 0 0 0 61.13482398140573 173.81135214943194 Z" class="circle-sector" fill="#eab308" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 61.13482398140573 173.81135214943194 A 92 92 0 0 1 61.1348239814057 126.18864785056813 L 99.77185703296844 136.54140965466894 A 52 52 0 0 0 99.77185703296846 163.4585903453311 Z" class="circle-sector" fill="#ef4444" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="34" y="154" text-anchor="middle" font-size="11" font-weight="800" fill="#111827" pointer-events="none">D#</text><text x="78" y="153" text-anchor="middle" font-size="9" font-weight="700" fill="#ffffff" pointer-events="none">Cm</text><path d="M 14.770384319530422 113.76533368564715 A 140 140 0 0 1 51.00505063388333 51.00505063388336 L 84.94617613083761 84.94617613083763 A 92 92 0 0 0 61.1348239814057 126.18864785056813 Z" class="circle-sector" fill="#a855f7" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 61.1348239814057 126.18864785056813 A 92 92 0 0 1 84.94617613083761 84.94617613083763 L 113.23044737829952 113.23044737829953 A 52 52 0 0 0 99.77185703296844 136.54140965466894 Z" class="circle-sector" fill="#06b6d4" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="49.541053161005095" y="96.00000000000003" text-anchor="middle" font-size="11" font-weight="800" fill="#ffffff" pointer-events="none">A#</text><text x="87.6461709275204" y="117.00000000000003" text-anchor="middle" font-size="9" font-weight="700" fill="#111827" pointer-events="none">Gm</text><path d="M 51.00505063388333 51.00505063388336 A 140 140 0 0 1 113.76533368564711 14.77038431953045 L 126.1886478505681 61.13482398140572 A 92 92 0 0 0 84.94617613083761 84.94617613083763 Z" class="circle-sector" fill="#84cc16" opacity="0.55" stroke="#111827" stroke-width="1.5"></path><path d="M 84.94617613083761 84.94617613083763 A 92 92 0 0 1 126.1886478505681 61.13482398140572 L 136.54140965466894 99.77185703296846 A 52 52 0 0 0 113.23044737829952 113.23044737829953 Z" class="circle-sector" fill="#f59e0b" opacity="0.45" stroke="#111827" stroke-width="1.5"></path><text x="92.00000000000004" y="53.541053161005095" text-anchor="middle" font-size="11" font-weight="800" fill="#111827" pointer-events="none">F</text><text x="114.00000000000003" y="90.6461709275204" text-anchor="middle" font-size="9" font-weight="700" fill="#111827" pointer-events="none">Dm</text><circle cx="150" cy="150" r="52" fill="#06b6d4" stroke="#ffffff" stroke-width="2.5"></circle><text x="150" y="147" text-anchor="middle" font-size="15" font-weight="800" fill="#111827">G</text><text x="150" y="162" text-anchor="middle" font-size="8" font-weight="800" fill="#111827">MAJOR</text></svg>
+            </div>
+            <div id="circle-legend" class="mt-2 text-[10px] text-gray-400 text-center flex items-center gap-3">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-white inline-block ring-2 ring-rose-500"></span> Outer: Major</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-gray-700 inline-block border border-gray-500"></span> Inner: Minor</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 bg-gray-900/60 py-4 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
+            FretLab Studio • Interactive Guitar Fretboard &amp; Real-Time Harmony Analyzer (Chroma-Notes™ System)
+        </div>
+    </footer>
+
+    <script>
+        // --- CHROMA-NOTES™ COLOR SYSTEM MAPPING ---
+        const CHROMA_NOTES = {
+            0:  { hex: '#ef4444', textDark: false, name: 'C' },
+            1:  { hex: '#f97316', textDark: false, name: 'C#' },
+            2:  { hex: '#f59e0b', textDark: true,  name: 'D' },
+            3:  { hex: '#eab308', textDark: true,  name: 'D#' },
+            4:  { hex: '#facc15', textDark: true,  name: 'E' },
+            5:  { hex: '#84cc16', textDark: true,  name: 'F' },
+            6:  { hex: '#10b981', textDark: false, name: 'F#' },
+            7:  { hex: '#06b6d4', textDark: true,  name: 'G' },
+            8:  { hex: '#3b82f6', textDark: false, name: 'G#' },
+            9:  { hex: '#6366f1', textDark: false, name: 'A' },
+            10: { hex: '#a855f7', textDark: false, name: 'A#' },
+            11: { hex: '#ec4899', textDark: false, name: 'B' }
+        };
+
+        const PITCH_CLASSES_SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const PITCH_CLASSES_FLAT  = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+        const TUNINGS = {
+            standard: { name: 'Standard', midi: [64, 59, 55, 50, 45, 40], labels: ['1 (e)', '2 (B)', '3 (G)', '4 (D)', '5 (A)', '6 (E)'] },
+            dropD:    { name: 'Drop D',   midi: [64, 59, 55, 50, 45, 38], labels: ['1 (e)', '2 (B)', '3 (G)', '4 (D)', '5 (A)', '6 (D)'] },
+            halfStep: { name: 'Half-Step Down', midi: [63, 58, 54, 49, 44, 39], labels: ['1 (eb)', '2 (Bb)', '3 (Gb)', '4 (Db)', '5 (Ab)', '6 (Eb)'] },
+            openG:    { name: 'Open G',   midi: [62, 59, 55, 50, 43, 38], labels: ['1 (d)', '2 (B)', '3 (G)', '4 (D)', '5 (G)', '6 (D)'] },
+            openD:    { name: 'Open D',   midi: [62, 57, 54, 50, 45, 38], labels: ['1 (d)', '2 (A)', '3 (F#)', '4 (D)', '5 (A)', '6 (D)'] },
+            dadgad:   { name: 'DADGAD',   midi: [62, 57, 55, 50, 45, 38], labels: ['1 (d)', '2 (A)', '3 (G)', '4 (D)', '5 (A)', '6 (D)'] }
+        };
+
+        // Generates 13 strings in Perfect Fourths (5 semitones apart) starting from Low E (MIDI 28 / E1) up to high C (MIDI 88 / C6)
+        const PERFECT_FOURTHS_13_MIDI = [];
+        const PERFECT_FOURTHS_13_LABELS = [];
+        let baseMidi13 = 28; // E1
+        for (let i = 0; i < 13; i++) {
+            const mVal = baseMidi13 + (i * 5);
+            PERFECT_FOURTHS_13_MIDI.unshift(mVal); // Higher pitch first (top string)
+            const pc = mVal % 12;
+            const oct = Math.floor(mVal / 12) - 1;
+            PERFECT_FOURTHS_13_LABELS.unshift(`${13 - i} (${PITCH_CLASSES_SHARP[pc]}${oct})`);
+        }
+
+        const INTERVAL_NAMES = {
+            0: '1', 1: 'b2', 2: '2', 3: 'b3', 4: '3', 5: '4', 
+            6: 'b5', 7: '5', 8: 'b6', 9: '6', 10: 'b7', 11: '7',
+            13: 'b9', 14: '9', 15: '#9', 18: '#11', 20: 'b13', 21: '13'
+        };
+
+        // Complete Expanded Database of Requested Chord Formulas
+        const CHORD_DEFINITIONS = [
+            { id: 'maj', name: 'Major', type: 'Maj', quality: 'Major Triad', formula: [0, 4, 7], abbr: 'maj' },
+            { id: 'm', name: 'Minor', type: 'm', quality: 'Minor Triad', formula: [0, 3, 7], abbr: 'min' },
+            { id: '7', name: 'Dominant 7th', type: '7', quality: 'Dominant 7th', formula: [0, 4, 7, 10], abbr: '7' },
+            { id: 'maj7', name: 'Major 7th', type: 'maj7', quality: 'Major 7th', formula: [0, 4, 7, 11], abbr: 'M7' },
+            { id: 'm7', name: 'Minor 7th', type: 'm7', quality: 'Minor 7th', formula: [0, 3, 7, 10], abbr: 'min7' },
+            { id: '5', name: 'Power Chord', type: '5', quality: 'Power Chord', formula: [0, 7], abbr: '5' },
+            { id: 'add9', name: 'Add 9', type: 'add9', quality: 'Added Ninth', formula: [0, 4, 7, 2], abbr: 'add9' },
+            { id: 'dim', name: 'Diminished', type: 'dim', quality: 'Diminished Triad', formula: [0, 3, 6], abbr: '°' },
+            { id: 'aug', name: 'Augmented', type: 'aug', quality: 'Augmented', formula: [0, 4, 8], abbr: '+' },
+            { id: 'sus2', name: 'Suspended 2nd', type: 'sus2', quality: 'Suspended', formula: [0, 2, 7], abbr: 'sus2' },
+            { id: 'sus4', name: 'Suspended 4th', type: 'sus4', quality: 'Suspended', formula: [0, 5, 7], abbr: 'sus4' },
+            { id: '7sus2', name: '7 Sus2', type: '7sus2', quality: 'Suspended 2nd Dominant', formula: [0, 2, 7, 10], abbr: '7sus2' },
+            { id: 'sus4_7', name: '7 Sus4', type: '7sus4', quality: 'Suspended Dominant', formula: [0, 5, 7, 10], abbr: '7sus4' },
+            { id: '6', name: 'Major 6th', type: '6', quality: 'Major 6th', formula: [0, 4, 7, 9], abbr: '6' },
+            { id: 'm6', name: 'Minor 6th', type: 'm6', quality: 'Minor 6th', formula: [0, 3, 7, 9], abbr: 'min6' },
+            { id: '9', name: 'Dominant 9th', type: '9', quality: 'Dominant 9th', formula: [0, 4, 7, 10, 2], abbr: '9' },
+            { id: 'm9', name: 'Minor 9th', type: 'm9', quality: 'Minor 9th', formula: [0, 3, 7, 10, 2], abbr: 'min9' },
+            { id: 'm7b5', name: 'Half-Diminished', type: 'm7b5', quality: 'Half-Diminished', formula: [0, 3, 6, 10], abbr: 'm7♭5' },
+            { id: '11', name: '11th Chord', type: '11', quality: 'Dominant 11th', formula: [0, 4, 7, 10, 2, 5], abbr: '11' },
+            { id: '13', name: 'Dominant 13th', type: '13', quality: 'Dominant 13th', formula: [0, 4, 7, 10, 9], abbr: '13' },
+            { id: 'aug7', name: 'Augmented 7th', type: 'aug7', quality: 'Augmented Dominant', formula: [0, 4, 8, 10], abbr: '+7' },
+            { id: 'dim7', name: 'Diminished 7th', type: 'dim7', quality: 'Diminished 7th', formula: [0, 3, 6, 9], abbr: '°7' },
+            { id: 'mMaj7', name: 'Minor Major 7th', type: 'mMaj7', quality: 'Minor Major 7th', formula: [0, 3, 7, 11], abbr: 'minmaj7' },
+            { id: 'sus9', name: 'Sus 9', type: 'sus9', quality: 'Suspended Ninth', formula: [0, 7, 2], abbr: 'sus9' },
+            { id: 'maj9', name: 'Major 9th', type: 'maj9', quality: 'Major 9th', formula: [0, 4, 7, 11, 2], abbr: 'M9' },
+            { id: '7b9', name: '7 Flat 9', type: '7b9', quality: 'Altered Dominant', formula: [0, 4, 7, 10, 1], abbr: '7♭9' },
+            { id: '7sharp9', name: '7 Sharp 9', type: '7#9', quality: 'Altered Dominant', formula: [0, 4, 7, 10, 3], abbr: '7♯9' },
+            { id: 'sus4_7_9', name: '7sus4 9', type: '7sus4_9', quality: 'Suspended 9th', formula: [0, 5, 7, 10, 2], abbr: '7sus4 9' },
+            { id: 'maj7sharp11', name: 'Major 7 #11', type: 'maj7#11', quality: 'Lydian Major 7', formula: [0, 4, 7, 11, 6], abbr: 'M7♯11' },
+            { id: '7sharp11', name: 'Dominant 7 #11', type: '7#11', quality: 'Acoustic Dominant', formula: [0, 4, 7, 10, 6], abbr: '7♯11' },
+            { id: 'm11', name: 'Minor 11th', type: 'm11', quality: 'Minor 11th', formula: [0, 3, 7, 10, 5], abbr: 'min11' },
+            { id: 'maj13', name: 'Major 13th', type: 'maj13', quality: 'Major 13th', formula: [0, 4, 7, 11, 9], abbr: 'M13' },
+            { id: '7b13', name: 'Dominant 7 b13', type: '7b13', quality: 'Altered Dominant 13', formula: [0, 4, 7, 10, 8], abbr: '7♭13' }
+        ];
+
+        // Comprehensive Open & Barre Chord Voicing Dictionary from Ultimate Chord Library PDF
+        const OPEN_CHORD_VOICINGS = {
+            // A Roots
+            '9-maj': [0, 2, 2, 2, 0, -1],
+            '9-m': [0, 1, 2, 2, 0, -1],
+            '9-7': [3, 2, 0, 2, 0, -1],
+            '9-maj7': [0, 2, 1, 2, 0, -1],
+            '9-m7': [0, 1, 0, 2, 0, -1],
+            '9-5': [-1, -1, 2, 2, 0, -1],
+            '9-add9': [0, 0, 2, 2, 0, -1],
+            '9-dim': [2, 1, 2, 1, -1, -1],
+            '9-aug': [1, 2, 2, 3, -1, -1],
+            '9-sus2': [0, 0, 2, 2, 0, -1],
+            '9-sus4': [0, 3, 2, 2, 0, -1],
+            '9-7sus2': [0, 0, 0, 2, 0, -1],
+            '9-7sus4': [0, 3, 0, 2, 0, -1],
+            '9-6': [2, 2, 2, 2, 0, -1],
+            '9-m6': [2, 1, 2, 2, 0, -1],
+            '9-9': [0, 0, 0, 2, 0, -1],
+            '9-m9': [0, 0, 5, 5, -1, 5],
+            '9-m7b5': [3, 1, 2, 1, 0, -1],
+            '9-11': [10, 10, 12, 11, 0, -1],
+            '9-13': [2, 2, 0, 2, 0, -1],
+
+            // A# / Bb Roots
+            '10-maj': [1, 3, 3, 3, 1, -1],
+            '10-m': [1, 2, 3, 3, 1, -1],
+            '10-7': [1, 3, 1, 3, 1, -1],
+            '10-maj7': [1, 3, 2, 3, 1, -1],
+            '10-m7': [1, 2, 1, 3, 1, -1],
+            '10-5': [-1, -1, 3, 3, 1, -1],
+            '10-add9': [1, 1, 3, 3, 1, -1],
+            '10-dim': [3, 2, 3, 2, -1, -1],
+            '10-aug': [2, 3, 3, 4, -1, -1],
+            '10-m7b5': [4, 2, 3, 2, 1, -1],
+            '10-sus2': [1, 1, 3, 3, 1, -1],
+            '10-sus4': [1, 4, 3, 3, 1, -1],
+            '10-7sus2': [1, 1, 1, 3, 1, -1],
+            '10-7sus4': [1, 4, 1, 3, 1, -1],
+            '10-6': [3, 3, 3, 3, 1, -1],
+            '10-m6': [3, 2, 3, 3, 1, -1],
+            '10-9': [1, 1, 1, 3, 1, -1],
+            '10-m9': [1, 1, 6, 6, -1, 6],
+            '10-11': [11, 11, 13, 12, 1, -1],
+            '10-13': [3, 3, 1, 3, 1, -1],
+
+            // B Roots
+            '11-maj': [2, 4, 4, 4, 2, -1],
+            '11-m': [2, 3, 4, 4, 2, -1],
+            '11-7': [2, 0, 2, 1, 2, -1],
+            '11-maj7': [2, 4, 3, 4, 2, -1],
+            '11-m7': [2, 3, 2, 4, 2, -1],
+            '11-5': [-1, -1, 4, 4, 2, -1],
+            '11-add9': [2, 2, 4, 4, 2, -1],
+            '11-dim': [4, 3, 4, 3, -1, -1],
+            '11-aug': [3, 0, 0, 1, 2, -1],
+            '11-m7b5': [5, 3, 4, 3, 2, -1],
+            '11-sus2': [2, 2, 4, 4, 2, -1],
+            '11-sus4': [2, 5, 4, 4, 2, -1],
+            '11-7sus2': [2, 2, 2, 4, 2, -1],
+            '11-7sus4': [2, 5, 2, 4, 2, -1],
+            '11-6': [4, 4, 4, 4, 2, -1],
+            '11-m6': [4, 3, 4, 4, 2, -1],
+            '11-9': [2, 2, 2, 4, 2, -1],
+            '11-m9': [2, 2, 7, 7, -1, 7],
+            '11-11': [0, 0, 2, 1, 2, -1],
+            '11-13': [4, 4, 2, 4, 2, -1],
+
+            // C Roots
+            '0-maj': [0, 1, 0, 2, 3, -1],
+            '0-m': [3, 4, 5, 5, 3, -1],
+            '0-7': [0, 1, 3, 2, 3, -1],
+            '0-maj7': [0, 0, 0, 2, 3, -1],
+            '0-m7': [3, 4, 3, 5, 3, -1],
+            '0-5': [-1, -1, 5, 5, 3, -1],
+            '0-add9': [0, 3, 0, 2, 3, -1],
+            '0-dim': [2, 1, 2, 1, -1, -1],
+            '0-aug': [0, 1, 1, 2, 3, -1],
+            '0-m7b5': [2, 1, 3, 1, 3, -1],
+            '0-sus2': [3, 3, 0, 0, 3, -1],
+            '0-sus4': [1, 1, 0, 3, 3, -1],
+            '0-7sus2': [3, 3, 3, 0, 3, -1],
+            '0-7sus4': [1, 1, 3, 3, 3, -1],
+            '0-6': [0, 1, 2, 2, 3, -1],
+            '0-m6': [3, 4, 2, 5, 3, -1],
+            '0-9': [0, 3, 3, 2, 3, -1],
+            '0-m9': [3, 3, 8, 8, -1, 8],
+            '0-11': [1, 1, 3, 2, 3, -1],
+            '0-13': [5, 3, 3, 5, 3, -1],
+
+            // C# / Db Roots
+            '1-maj': [4, 6, 6, 6, 4, -1],
+            '1-m': [4, 5, 6, 6, 4, -1],
+            '1-7': [4, 6, 4, 6, 4, -1],
+            '1-maj7': [4, 6, 5, 6, 4, -1],
+            '1-m7': [4, 5, 4, 6, 4, -1],
+            '1-5': [-1, -1, 6, 6, 4, -1],
+            '1-add9': [4, 4, 6, 6, 4, -1],
+            '1-dim': [3, 2, 3, 2, -1, -1],
+            '1-aug': [1, 2, 2, 3, 4, -1],
+            '1-m7b5': [3, 2, 4, 2, 4, -1],
+            '1-sus2': [4, 4, 6, 6, 4, -1],
+            '1-sus4': [4, 7, 6, 6, 4, -1],
+            '1-7sus2': [4, 4, 4, 6, 4, -1],
+            '1-7sus4': [4, 7, 4, 6, 4, -1],
+            '1-6': [6, 6, 6, 6, 4, -1],
+            '1-m6': [6, 5, 6, 6, 4, -1],
+            '1-9': [4, 4, 4, 6, 4, -1],
+            '1-m9': [4, 4, 9, 9, -1, 9],
+            '1-11': [2, 2, 4, 3, 4, -1],
+            '1-13': [6, 6, 4, 6, 4, -1],
+
+            // D Roots
+            '2-maj': [2, 3, 2, 0, -1, -1],
+            '2-m': [1, 3, 2, 0, -1, -1],
+            '2-7': [2, 1, 2, 0, -1, -1],
+            '2-maj7': [2, 2, 2, 0, -1, -1],
+            '2-m7': [1, 1, 2, 0, -1, -1],
+            '2-5': [-1, 3, 2, 0, -1, -1],
+            '2-add9': [0, 3, 2, 0, -1, -1],
+            '2-dim': [1, 3, 1, 0, -1, -1],
+            '2-aug': [2, 3, 3, 0, -1, -1],
+            '2-m7b5': [1, 1, 1, 0, -1, -1],
+            '2-sus2': [0, 3, 2, 0, -1, -1],
+            '2-sus4': [3, 3, 2, 0, -1, -1],
+            '2-7sus2': [0, 1, 2, 0, -1, -1],
+            '2-7sus4': [3, 1, 2, 0, -1, -1],
+            '2-6': [2, 0, 2, 0, -1, -1],
+            '2-m6': [1, 0, 2, 0, -1, -1],
+            '2-9': [0, 1, 2, 0, -1, -1],
+            '2-m9': [0, 1, 2, 0, -1, -1],
+            '2-11': [3, 1, 0, 0, -1, -1],
+            '2-13': [7, 7, 5, 7, 5, -1],
+
+            // D# / Eb Roots
+            '3-maj': [3, 4, 3, 1, -1, -1],
+            '3-m': [2, 4, 3, 1, -1, -1],
+            '3-7': [3, 2, 3, 1, -1, -1],
+            '3-maj7': [3, 3, 3, 1, -1, -1],
+            '3-m7': [2, 2, 3, 1, -1, -1],
+            '3-5': [-1, 4, 3, 1, -1, -1],
+            '3-add9': [1, 4, 3, 1, -1, -1],
+            '3-dim': [2, 4, 2, 1, -1, -1],
+            '3-aug': [3, 4, 4, 1, -1, -1],
+            '3-m7b5': [2, 2, 2, 1, -1, -1],
+            '3-sus2': [1, 4, 3, 1, -1, -1],
+            '3-sus4': [4, 4, 3, 1, -1, -1],
+            '3-7sus2': [1, 2, 3, 1, -1, -1],
+            '3-7sus4': [4, 2, 3, 1, -1, -1],
+            '3-6': [3, 1, 3, 1, -1, -1],
+            '3-m6': [2, 1, 3, 1, -1, -1],
+            '3-9': [1, 2, 3, 1, -1, -1],
+            '3-m9': [1, 2, 3, 1, -1, -1],
+            '3-11': [4, 2, 1, 1, -1, -1],
+            '3-13': [8, 8, 6, 8, 6, -1],
+
+            // E Roots
+            '4-maj': [0, 0, 1, 2, 2, 0],
+            '4-m': [0, 0, 0, 2, 2, 0],
+            '4-7': [0, 0, 1, 0, 2, 0],
+            '4-maj7': [0, 0, 1, 1, 2, 0],
+            '4-m7': [0, 0, 0, 0, 2, 0],
+            '4-5': [-1, -1, -1, 2, 2, 0],
+            '4-add9': [2, 0, 1, 2, 2, 0],
+            '4-dim': [3, 0, 0, 2, 1, 0],
+            '4-aug': [0, 1, 1, 2, 3, 0],
+            '4-m7b5': [3, 3, 0, 2, 1, 0],
+            '4-sus2': [2, 0, 4, 4, 2, 0],
+            '4-sus4': [0, 0, 2, 2, 2, 0],
+            '4-7sus2': [2, 0, 2, 0, 2, 0],
+            '4-7sus4': [0, 0, 2, 0, 2, 0],
+            '4-6': [0, 2, 1, 2, 2, 0],
+            '4-m6': [0, 2, 0, 2, 2, 0],
+            '4-9': [2, 0, 1, 0, 2, 0],
+            '4-m9': [2, 0, 0, 0, 2, 0],
+            '4-11': [0, 0, 1, 0, 0, 0],
+            '4-13': [0, 2, 1, 0, 2, 0],
+
+            // F Roots
+            '5-maj': [1, 1, 2, 3, 3, 1],
+            '5-m': [1, 1, 1, 3, 3, 1],
+            '5-7': [1, 1, 2, 1, 3, 1],
+            '5-maj7': [0, 1, 2, 3, 3, 1],
+            '5-m7': [1, 1, 1, 1, 3, 1],
+            '5-5': [-1, -1, -1, 3, 3, 1],
+            '5-add9': [3, 1, 2, 3, 3, 1],
+            '5-dim': [4, 1, 1, 3, 2, 1],
+            '5-aug': [1, 2, 2, 3, 4, 1],
+            '5-m7b5': [4, 4, 1, 3, 2, 1],
+            '5-sus2': [3, 1, 5, 5, 3, 1],
+            '5-sus4': [1, 1, 3, 3, 3, 1],
+            '5-7sus2': [3, 1, 3, 1, 3, 1],
+            '5-7sus4': [1, 1, 3, 1, 3, 1],
+            '5-6': [1, 3, 2, 3, 3, 1],
+            '5-m6': [1, 3, 1, 3, 3, 1],
+            '5-9': [3, 1, 2, 1, 3, 1],
+            '5-m9': [3, 1, 1, 1, 3, 1],
+            '5-11': [1, 1, 2, 1, 1, 1],
+            '5-13': [1, 3, 2, 1, 3, 1],
+
+            // F# / Gb Roots
+            '6-maj': [2, 2, 3, 4, 4, 2],
+            '6-m': [2, 2, 2, 4, 4, 2],
+            '6-7': [2, 2, 3, 2, 4, 2],
+            '6-maj7': [1, 2, 3, 4, 4, 2],
+            '6-m7': [2, 2, 2, 2, 4, 2],
+            '6-5': [-1, -1, -1, 4, 4, 2],
+            '6-add9': [4, 2, 3, 4, 4, 2],
+            '6-dim': [5, 2, 2, 4, 3, 2],
+            '6-aug': [2, 3, 3, 4, 5, 2],
+            '6-m7b5': [5, 5, 2, 4, 3, 2],
+            '6-sus2': [4, 2, 6, 6, 4, 2],
+            '6-sus4': [2, 2, 4, 4, 4, 2],
+            '6-7sus2': [4, 2, 4, 2, 4, 2],
+            '6-7sus4': [2, 2, 4, 2, 4, 2],
+            '6-6': [2, 4, 3, 4, 4, 2],
+            '6-m6': [2, 4, 2, 4, 4, 2],
+            '6-9': [4, 2, 3, 2, 4, 2],
+            '6-m9': [4, 2, 2, 2, 4, 2],
+            '6-11': [2, 2, 3, 2, 2, 2],
+            '6-13': [2, 4, 3, 2, 4, 2],
+
+            // G Roots
+            '7-maj': [3, 0, 0, 0, 2, 3],
+            '7-m': [3, 3, 3, 5, 5, 3],
+            '7-7': [1, 0, 0, 0, 2, 3],
+            '7-maj7': [2, 0, 0, 0, 2, 3],
+            '7-m7': [3, 3, 3, 3, 5, 3],
+            '7-5': [-1, -1, -1, 5, 5, 3],
+            '7-add9': [3, 0, 2, 0, 2, 3],
+            '7-dim': [6, 3, 3, 5, 4, 3],
+            '7-aug': [3, 4, 4, 5, -1, 3],
+            '7-m7b5': [6, 6, 3, 5, 4, 3],
+            '7-sus2': [5, 3, 7, 7, 5, 3],
+            '7-sus4': [3, 1, 0, 0, 3, 3],
+            '7-7sus2': [5, 3, 5, 3, 5, 3],
+            '7-7sus4': [3, 1, 0, 0, 1, 3],
+            '7-6': [0, 0, 0, 0, 2, 3],
+            '7-m6': [0, 3, 0, 0, 1, 3],
+            '7-9': [5, 3, 4, 3, 5, 3],
+            '7-m9': [5, 3, 3, 3, 5, 3],
+            '7-11': [3, 1, 0, 0, 0, 3],
+            '7-13': [0, 0, 0, 3, 2, 3],
+
+            // G# / Ab Roots
+            '8-maj': [4, 4, 5, 6, 6, 4],
+            '8-m': [4, 4, 4, 6, 6, 4],
+            '8-7': [4, 4, 5, 4, 6, 4],
+            '8-maj7': [3, 4, 5, 6, 6, 4],
+            '8-m7': [4, 4, 4, 4, 6, 4],
+            '8-5': [-1, -1, -1, 6, 6, 4],
+            '8-add9': [6, 4, 5, 6, 6, 4],
+            '8-dim': [7, 4, 4, 6, 5, 4],
+            '8-aug': [4, 5, 5, 6, 7, 4],
+            '8-m7b5': [7, 7, 4, 6, 5, 4],
+            '8-sus2': [6, 4, 8, 8, 6, 4],
+            '8-sus4': [4, 4, 6, 6, 6, 4],
+            '8-7sus2': [6, 4, 6, 4, 6, 4],
+            '8-7sus4': [4, 4, 6, 4, 6, 4],
+            '8-6': [4, 6, 5, 6, 6, 4],
+            '8-m6': [4, 6, 4, 6, 6, 4],
+            '8-9': [6, 4, 5, 4, 6, 4],
+            '8-m9': [6, 4, 4, 4, 6, 4],
+            '8-11': [4, 4, 5, 4, 4, 4],
+            '8-13': [4, 6, 5, 4, 6, 4]
+        };
+
+        // Scale & Theoretical Patterns Database
+        const THEORY_PATTERNS = {
+            scales: {
+                'Major (Ionian)': [0, 2, 4, 5, 7, 9, 11],
+                'Natural Minor (Aeolian)': [0, 2, 3, 5, 7, 8, 10],
+                'Dorian Mode': [0, 2, 3, 5, 7, 9, 10],
+                'Phrygian Mode': [0, 1, 3, 5, 7, 8, 10],
+                'Lydian Mode': [0, 2, 4, 6, 7, 9, 11],
+                'Mixolydian Mode': [0, 2, 4, 5, 7, 9, 10],
+                'Locrian Mode': [0, 1, 3, 5, 6, 8, 10],
+                'Harmonic Minor': [0, 2, 3, 5, 7, 8, 11]
+            },
+            pentatonics: {
+                'Minor Pentatonic': [0, 3, 5, 7, 10],
+                'Major Pentatonic': [0, 2, 4, 7, 9],
+                'Minor Blues': [0, 3, 5, 6, 7, 10],
+                'Major Blues': [0, 2, 3, 4, 7, 9]
+            },
+            triads: {
+                'Major Triad': [0, 4, 7],
+                'Minor Triad': [0, 3, 7],
+                'Diminished Triad': [0, 3, 6],
+                'Augmented Triad': [0, 4, 8],
+                'Sus2 Triad': [0, 2, 7],
+                'Sus4 Triad': [0, 5, 7]
+            }
+        };
+
+        // Circle of Fifths Ring Ordering
+        const CIRCLE_OF_FIFTHS = [
+            { pcMajor: 0,  majorSharp: 'C',  majorFlat: 'C',  pcMinor: 9,  minorSharp: 'Am',  minorFlat: 'Am'  },
+            { pcMajor: 7,  majorSharp: 'G',  majorFlat: 'G',  pcMinor: 4,  minorSharp: 'Em',  minorFlat: 'Em'  },
+            { pcMajor: 2,  majorSharp: 'D',  majorFlat: 'D',  pcMinor: 11, minorSharp: 'Bm',  minorFlat: 'Bm'  },
+            { pcMajor: 9,  majorSharp: 'A',  majorFlat: 'A',  pcMinor: 6,  minorSharp: 'F#m', minorFlat: 'Gbm' },
+            { pcMajor: 4,  majorSharp: 'E',  majorFlat: 'E',  pcMinor: 1,  minorSharp: 'C#m', minorFlat: 'Dbm' },
+            { pcMajor: 11, majorSharp: 'B',  majorFlat: 'Cb', pcMinor: 8,  minorSharp: 'G#m', minorFlat: 'Abm' },
+            { pcMajor: 6,  majorSharp: 'F#', majorFlat: 'Gb', pcMinor: 3,  minorSharp: 'D#m', minorFlat: 'Ebm' },
+            { pcMajor: 1,  majorSharp: 'C#', majorFlat: 'Db', pcMinor: 10, minorSharp: 'A#m', minorFlat: 'Bbm' },
+            { pcMajor: 8,  majorSharp: 'G#', majorFlat: 'Ab', pcMinor: 5,  minorSharp: 'Fm',  minorFlat: 'Fm'  },
+            { pcMajor: 3,  majorSharp: 'D#', majorFlat: 'Eb', pcMinor: 0,  minorSharp: 'Cm',  minorFlat: 'Cm'  },
+            { pcMajor: 10, majorSharp: 'A#', majorFlat: 'Bb', pcMinor: 7,  minorSharp: 'Gm',  minorFlat: 'Gm'  },
+            { pcMajor: 5,  majorSharp: 'F',  majorFlat: 'F',  pcMinor: 2,  minorSharp: 'Dm',  minorFlat: 'Dm'  }
+        ];
+
+        const NUM_FRETS = 18;
+
+        // --- GLOBAL APP STATE ---
+        const state = {
+            mode: 'chord',
+            clickAction: 'toggle',
+            polyphony: 'single',
+            tuningKey: 'standard',
+            is13Strings: false,
+            capo: 0,
+            labelDisplay: 'notes', // 'notes', 'intervals', 'both', 'octaves', 'frets'
+            useFlats: false,
+            designatedRoot: 0, 
+            singleNotes: [0, 1, 0, 2, 3, -1], // -1 indicates MUTED string
+            multiNotes: new Map(),
+            chordRoot: 0,
+            chordType: 'maj',
+            chordDisplayMode: 'voicing',
+            theoryRoot: 0,
+            theoryCategory: 'scales',
+            theoryPatternKey: 'Major (Ionian)',
+            isMuted: false,
+            circleMinimized: false
+        };
+
+        // --- WEB AUDIO GUITAR SYNTHESIZER ---
+        class GuitarSynth {
+            constructor() {
+                this.ctx = null;
+                this.masterGain = null;
+                this.activeOscillators = [];
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.masterGain = this.ctx.createGain();
+                    this.masterGain.gain.setValueAtTime(state.isMuted ? 0 : 1, this.ctx.currentTime);
+                    this.masterGain.connect(this.ctx.destination);
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            setMute(muteState) {
+                state.isMuted = muteState;
+                if (this.ctx && this.masterGain) {
+                    this.masterGain.gain.setValueAtTime(muteState ? 0 : 1, this.ctx.currentTime);
+                }
+                if (muteState) {
+                    this.stopAllSounds();
+                }
+            }
+
+            stopAllSounds() {
+                this.activeOscillators.forEach(osc => {
+                    try { osc.stop(); } catch(e) {}
+                });
+                this.activeOscillators = [];
+            }
+
+            playPluck(midiNote, delay = 0) {
+                if (state.isMuted || midiNote < 0) return;
+                this.init();
+
+                const now = this.ctx.currentTime + delay;
+                const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+
+                const osc = this.ctx.createOscillator();
+                const noteGain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(Math.min(freq * 6, 7500), now);
+                filter.frequency.exponentialRampToValueAtTime(freq * 1.1, now + 1.2);
+
+                noteGain.gain.setValueAtTime(0.0001, now);
+                noteGain.gain.linearRampToValueAtTime(0.38, now + 0.012);
+                noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+
+                osc.connect(filter);
+                filter.connect(noteGain);
+                noteGain.connect(this.masterGain);
+
+                osc.start(now);
+                this.activeOscillators.push(osc);
+                osc.stop(now + 1.85);
+            }
+
+            strumNotes(midiNotes, delayBetweenStrings = 0.035) {
+                if (state.isMuted) return;
+                midiNotes.forEach((midi, idx) => {
+                    if (midi > 0) {
+                        this.playPluck(midi, idx * delayBetweenStrings);
+                    }
+                });
+            }
+        }
+
+        const synth = new GuitarSynth();
+
+        // --- DOM INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initControls();
+            populateSelectOptions();
+            applySelectedChord();
+            renderFretboard();
+            updateAnalysisAndUI();
+            renderCircleOfFifths();
+        });
+
+        function initControls() {
+            const modeCustomBtn = document.getElementById('mode-custom-btn');
+            const modeChordBtn = document.getElementById('mode-chord-btn');
+            const modeTheoryBtn = document.getElementById('mode-theory-btn');
+            
+            const customTools = document.getElementById('custom-tools');
+            const chordTools = document.getElementById('chord-selector-tools');
+            const theoryControls = document.getElementById('theory-controls');
+
+            modeCustomBtn.addEventListener('click', () => {
+                state.mode = 'custom';
+                setActiveModeBtn(modeCustomBtn, [modeChordBtn, modeTheoryBtn]);
+                customTools.classList.remove('hidden');
+                chordTools.classList.add('hidden');
+                theoryControls.classList.add('hidden');
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            modeChordBtn.addEventListener('click', () => {
+                state.mode = 'chord';
+                setActiveModeBtn(modeChordBtn, [modeCustomBtn, modeTheoryBtn]);
+                chordTools.classList.remove('hidden');
+                customTools.classList.add('hidden');
+                theoryControls.classList.add('hidden');
+                applySelectedChord();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            modeTheoryBtn.addEventListener('click', () => {
+                state.mode = 'theory';
+                setActiveModeBtn(modeTheoryBtn, [modeCustomBtn, modeChordBtn]);
+                theoryControls.classList.remove('hidden');
+                customTools.classList.add('hidden');
+                chordTools.classList.add('hidden');
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            function setActiveModeBtn(active, inactives) {
+                active.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-indigo-600 text-white shadow-md flex items-center justify-center gap-1.5";
+                inactives.forEach(btn => {
+                    btn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-gray-400 hover:text-white flex items-center justify-center gap-1.5";
+                });
+            }
+
+            const muteBtn = document.getElementById('mute-toggle-btn');
+            const muteIcon = document.getElementById('mute-icon');
+            const muteText = document.getElementById('mute-text');
+            const mutePing = document.getElementById('mute-ping');
+            const muteDot = document.getElementById('mute-dot');
+
+            muteBtn.addEventListener('click', () => {
+                const newMuteState = !state.isMuted;
+                synth.setMute(newMuteState);
+
+                if (newMuteState) {
+                    muteBtn.className = "bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 text-xs font-bold py-2 px-3.5 rounded-xl transition-all flex items-center gap-2 active:scale-95";
+                    muteIcon.className = "fa-solid fa-volume-xmark text-sm text-rose-400";
+                    muteText.textContent = "SILENCED";
+                    mutePing.classList.add('hidden');
+                    muteDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500";
+                } else {
+                    muteBtn.className = "bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700 text-xs font-bold py-2 px-3.5 rounded-xl transition-all flex items-center gap-2 active:scale-95";
+                    muteIcon.className = "fa-solid fa-volume-high text-sm";
+                    muteText.textContent = "Audio ON";
+                    mutePing.classList.remove('hidden');
+                    muteDot.className = "relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500";
+                }
+            });
+
+            // 13-Strings Toggle Handler
+            const toggle13 = document.getElementById('mode-13strings-toggle');
+            const tuningSelectContainer = document.getElementById('tuning-select-container');
+
+            toggle13.addEventListener('change', (e) => {
+                state.is13Strings = e.target.checked;
+                if (state.is13Strings) {
+                    tuningSelectContainer.classList.add('opacity-40', 'pointer-events-none');
+                } else {
+                    tuningSelectContainer.classList.remove('opacity-40', 'pointer-events-none');
+                }
+                if (state.mode === 'chord') applySelectedChord();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            const circleMinBtn = document.getElementById('circle-minimize-btn');
+            const circleContent = document.getElementById('circle-content');
+            const circleMinIcon = document.getElementById('circle-min-icon');
+
+            circleMinBtn.addEventListener('click', () => {
+                state.circleMinimized = !state.circleMinimized;
+                if (state.circleMinimized) {
+                    circleContent.classList.add('hidden');
+                    circleMinIcon.className = "fa-solid fa-chevron-up";
+                } else {
+                    circleContent.classList.remove('hidden');
+                    circleMinIcon.className = "fa-solid fa-chevron-down";
+                }
+            });
+
+            document.getElementById('chord-root-select').addEventListener('change', (e) => {
+                state.chordRoot = parseInt(e.target.value);
+                state.designatedRoot = state.chordRoot;
+                applySelectedChord();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('chord-type-select').addEventListener('change', (e) => {
+                state.chordType = e.target.value;
+                applySelectedChord();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('chord-mode-display').addEventListener('change', (e) => {
+                state.chordDisplayMode = e.target.value;
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('click-action-select').addEventListener('change', (e) => {
+                state.clickAction = e.target.value;
+            });
+
+            document.getElementById('polyphony-select').addEventListener('change', (e) => {
+                state.polyphony = e.target.value;
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            const displayBtns = {
+                notes: document.getElementById('lbl-notes'),
+                intervals: document.getElementById('lbl-intervals'),
+                both: document.getElementById('lbl-both'),
+                octaves: document.getElementById('lbl-octaves'),
+                frets: document.getElementById('lbl-frets')
+            };
+
+            Object.keys(displayBtns).forEach(modeKey => {
+                displayBtns[modeKey].addEventListener('click', () => {
+                    state.labelDisplay = modeKey;
+                    Object.keys(displayBtns).forEach(k => {
+                        displayBtns[k].className = (k === modeKey) 
+                            ? "px-2.5 py-1 rounded-lg font-semibold bg-indigo-600 text-white"
+                            : "px-2.5 py-1 rounded-lg font-semibold text-gray-400 hover:text-white";
+                    });
+                    renderFretboard();
+                });
+            });
+
+            document.getElementById('accidental-btn').addEventListener('click', () => {
+                state.useFlats = !state.useFlats;
+                document.getElementById('accidental-text').textContent = state.useFlats ? '♭ Flats' : '♯ Sharps';
+                populateRootSelects();
+                renderFretboard();
+                updateAnalysisAndUI();
+                renderCircleOfFifths();
+            });
+
+            document.getElementById('tuning-select').addEventListener('change', (e) => {
+                state.tuningKey = e.target.value;
+                if (state.mode === 'chord') applySelectedChord();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('capo-select').addEventListener('change', (e) => {
+                state.capo = parseInt(e.target.value);
+                const capoBanner = document.getElementById('capo-banner');
+                if (state.capo > 0) {
+                    capoBanner.classList.remove('hidden');
+                    document.getElementById('capo-fret-num').textContent = state.capo;
+                } else {
+                    capoBanner.classList.add('hidden');
+                }
+                if (state.mode === 'chord') applySelectedChord();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('theory-category-select').addEventListener('change', (e) => {
+                state.theoryCategory = e.target.value;
+                populateTheoryPatternSelect();
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('theory-pattern-select').addEventListener('change', (e) => {
+                state.theoryPatternKey = e.target.value;
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('theory-root-select').addEventListener('change', (e) => {
+                state.theoryRoot = parseInt(e.target.value);
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('strum-btn').addEventListener('click', () => playActiveNotes(false));
+            document.getElementById('arpeggiate-btn').addEventListener('click', () => playActiveNotes(true));
+
+            document.getElementById('export-jpg-btn').addEventListener('click', () => exportFretboard('jpeg'));
+            document.getElementById('export-pdf-btn').addEventListener('click', () => exportFretboard('pdf'));
+
+            document.getElementById('reset-root-btn').addEventListener('click', () => {
+                state.designatedRoot = null;
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+
+            document.getElementById('clear-fretboard-btn').addEventListener('click', () => {
+                const stringCount = state.is13Strings ? 13 : 6;
+                state.singleNotes = new Array(stringCount).fill(-1);
+                state.multiNotes.clear();
+                state.designatedRoot = null;
+                renderFretboard();
+                updateAnalysisAndUI();
+            });
+        }
+
+        function populateSelectOptions() {
+            populateRootSelects();
+            populateChordTypeSelect();
+            populateTheoryPatternSelect();
+        }
+
+        function populateRootSelects() {
+            const chordRootSelect = document.getElementById('chord-root-select');
+            const theoryRootSelect = document.getElementById('theory-root-select');
+            
+            chordRootSelect.innerHTML = '';
+            theoryRootSelect.innerHTML = '';
+
+            const pitchArr = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+            pitchArr.forEach((note, idx) => {
+                const opt1 = document.createElement('option');
+                opt1.value = idx;
+                opt1.textContent = note;
+                chordRootSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = idx;
+                opt2.textContent = note;
+                theoryRootSelect.appendChild(opt2);
+            });
+
+            chordRootSelect.value = state.chordRoot;
+            theoryRootSelect.value = state.theoryRoot;
+        }
+
+        function populateChordTypeSelect() {
+            const chordTypeSelect = document.getElementById('chord-type-select');
+            chordTypeSelect.innerHTML = '';
+
+            CHORD_DEFINITIONS.forEach(def => {
+                const opt = document.createElement('option');
+                opt.value = def.id;
+                opt.textContent = `${def.name} (${def.abbr})`;
+                chordTypeSelect.appendChild(opt);
+            });
+
+            chordTypeSelect.value = state.chordType;
+        }
+
+        function populateTheoryPatternSelect() {
+            const patSelect = document.getElementById('theory-pattern-select');
+            patSelect.innerHTML = '';
+            const categoryObj = THEORY_PATTERNS[state.theoryCategory] || THEORY_PATTERNS.scales;
+            const keys = Object.keys(categoryObj);
+            keys.forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = key;
+                patSelect.appendChild(opt);
+            });
+            state.theoryPatternKey = keys[0];
+        }
+
+        function applySelectedChord() {
+            const rootPC = state.chordRoot;
+            const chordId = state.chordType;
+            state.designatedRoot = rootPC;
+
+            if (state.is13Strings) {
+                // 13-String Voicing Auto-Placement Logic
+                const tuningObj = { midi: PERFECT_FOURTHS_13_MIDI };
+                const fingering = new Array(13).fill(-1);
+                const def = CHORD_DEFINITIONS.find(d => d.id === chordId) || CHORD_DEFINITIONS[0];
+
+                for (let s = 12; s >= 0; s--) {
+                    const baseMidi = tuningObj.midi[s] + state.capo;
+                    for (let f = 0; f <= 5; f++) {
+                        const pc = (baseMidi + f) % 12;
+                        const relInterval = (pc - rootPC + 12) % 12;
+                        if (def.formula.includes(relInterval)) {
+                            fingering[s] = f;
+                            break;
+                        }
+                    }
+                }
+                state.singleNotes = fingering;
+                return;
+            }
+
+            const key = `${rootPC}-${chordId}`;
+            if (OPEN_CHORD_VOICINGS[key]) {
+                state.singleNotes = [...OPEN_CHORD_VOICINGS[key]];
+                return;
+            }
+
+            const tuningObj = TUNINGS[state.tuningKey];
+            const lowEMidi = tuningObj.midi[5] + state.capo;
+            const aMidi = tuningObj.midi[4] + state.capo;
+
+            let rootFret6 = (rootPC - (lowEMidi % 12) + 12) % 12;
+            let rootFret5 = (rootPC - (aMidi % 12) + 12) % 12;
+
+            if (rootFret6 === 0 && rootPC !== (lowEMidi % 12)) rootFret6 = 12;
+            if (rootFret5 === 0 && rootPC !== (aMidi % 12)) rootFret5 = 12;
+
+            let fingering = [-1, -1, -1, -1, -1, -1];
+
+            if (rootFret5 <= 7 && rootFret5 > 0) {
+                const F = rootFret5;
+                if (chordId === 'maj' || chordId === '6') fingering = [F, F + 2, F + 2, F + 2, F, -1];
+                else if (chordId === 'm' || chordId === 'm6') fingering = [F, F + 1, F + 2, F + 2, F, -1];
+                else if (chordId === '7') fingering = [F, F + 2, F, F + 2, F, -1];
+                else if (chordId === 'maj7') fingering = [F, F + 2, F + 1, F + 2, F, -1];
+                else if (chordId === 'm7') fingering = [F, F + 1, F, F + 2, F, -1];
+                else if (chordId === '5') fingering = [-1, -1, F + 2, F + 2, F, -1];
+                else if (chordId === 'sus4') fingering = [F, F + 3, F + 2, F + 2, F, -1];
+                else if (chordId === 'aug') fingering = [F, F + 2, F + 1, F + 2, F, -1];
+                else fingering = [F, F + 1, F, F + 2, F, -1];
+            } else {
+                const F = rootFret6;
+                if (chordId === 'maj' || chordId === '6') fingering = [F, F, F + 1, F + 2, F + 2, F];
+                else if (chordId === 'm' || chordId === 'm6') fingering = [F, F, F, F + 2, F + 2, F];
+                else if (chordId === '7') fingering = [F, F, F + 1, F, F + 2, F];
+                else if (chordId === 'maj7') fingering = [F, F, F + 1, F + 1, F + 2, F];
+                else if (chordId === 'm7') fingering = [F, F, F, F, F + 2, F];
+                else if (chordId === '5') fingering = [-1, -1, -1, F + 2, F + 2, F];
+                else if (chordId === 'sus4') fingering = [F, F, F + 2, F + 2, F + 2, F];
+                else fingering = [F, F, F + 1, F, F + 2, F];
+            }
+
+            state.singleNotes = fingering;
+        }
+
+        // --- CIRCLE OF FIFTHS RENDER ENGINE ---
+        function renderCircleOfFifths() {
+            const svg = document.getElementById('circle-svg');
+            if (!svg) return;
+            svg.innerHTML = '';
+
+            const cx = 150, cy = 150;
+            const rOuter = 140, rMid = 92, rInner = 52;
+            const activeNotes = getActiveNotesList();
+            const analysis = analyzeChord(activeNotes);
+
+            let activeRootPC = (state.designatedRoot !== null)
+                ? state.designatedRoot
+                : (state.mode === 'theory' ? state.theoryRoot : (activeNotes.length > 0 ? activeNotes[0].pitchClass : 0));
+
+            let isMinorQuality = false;
+            if (state.mode === 'chord') {
+                isMinorQuality = ['m', 'm7', 'm6', 'm7b5', 'dim', 'dim7', 'mMaj7', 'm9', 'm11'].includes(state.chordType);
+            } else {
+                isMinorQuality = analysis.quality.toLowerCase().includes('minor') || analysis.quality.toLowerCase().includes('diminished');
+            }
+
+            CIRCLE_OF_FIFTHS.forEach((item, i) => {
+                const startAngle = (i * 30 - 105) * Math.PI / 180;
+                const endAngle = ((i + 1) * 30 - 105) * Math.PI / 180;
+                const midAngle = (startAngle + endAngle) / 2;
+
+                const isMajorHighlight = (item.pcMajor === activeRootPC && !isMinorQuality);
+                const isMinorHighlight = (item.pcMinor === activeRootPC && isMinorQuality);
+
+                const chromaMaj = CHROMA_NOTES[item.pcMajor];
+                const chromaMin = CHROMA_NOTES[item.pcMinor];
+
+                const pathOuter = createArcSvgPath(cx, cy, rMid, rOuter, startAngle, endAngle);
+                const pathOuterEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                pathOuterEl.setAttribute('d', pathOuter);
+                pathOuterEl.setAttribute('class', 'circle-sector');
+                pathOuterEl.setAttribute('fill', chromaMaj.hex);
+                pathOuterEl.setAttribute('opacity', isMajorHighlight ? '1.0' : '0.55');
+                pathOuterEl.setAttribute('stroke', isMajorHighlight ? '#ffffff' : '#111827');
+                pathOuterEl.setAttribute('stroke-width', isMajorHighlight ? '3.5' : '1.5');
+
+                pathOuterEl.addEventListener('click', () => {
+                    state.chordRoot = item.pcMajor;
+                    state.designatedRoot = item.pcMajor;
+                    state.chordType = 'maj';
+                    if (state.mode === 'chord') applySelectedChord();
+                    renderFretboard();
+                    updateAnalysisAndUI();
+                });
+                svg.appendChild(pathOuterEl);
+
+                const pathInner = createArcSvgPath(cx, cy, rInner, rMid, startAngle, endAngle);
+                const pathInnerEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                pathInnerEl.setAttribute('d', pathInner);
+                pathInnerEl.setAttribute('class', 'circle-sector');
+                pathInnerEl.setAttribute('fill', chromaMin.hex);
+                pathInnerEl.setAttribute('opacity', isMinorHighlight ? '1.0' : '0.45');
+                pathInnerEl.setAttribute('stroke', isMinorHighlight ? '#ffffff' : '#111827');
+                pathInnerEl.setAttribute('stroke-width', isMinorHighlight ? '3.5' : '1.5');
+
+                pathInnerEl.addEventListener('click', () => {
+                    state.chordRoot = item.pcMinor;
+                    state.designatedRoot = item.pcMinor;
+                    state.chordType = 'm';
+                    if (state.mode === 'chord') applySelectedChord();
+                    renderFretboard();
+                    updateAnalysisAndUI();
+                });
+                svg.appendChild(pathInnerEl);
+
+                const rMajorText = (rOuter + rMid) / 2;
+                const xMaj = cx + rMajorText * Math.cos(midAngle);
+                const yMaj = cy + rMajorText * Math.sin(midAngle);
+                const labelMaj = state.useFlats ? item.majorFlat : item.majorSharp;
+
+                const textMajEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                textMajEl.setAttribute('x', xMaj);
+                textMajEl.setAttribute('y', yMaj + 4);
+                textMajEl.setAttribute('text-anchor', 'middle');
+                textMajEl.setAttribute('font-size', '11');
+                textMajEl.setAttribute('font-weight', '800');
+                textMajEl.setAttribute('fill', chromaMaj.textDark ? '#111827' : '#ffffff');
+                textMajEl.setAttribute('pointer-events', 'none');
+                textMajEl.textContent = labelMaj;
+                svg.appendChild(textMajEl);
+
+                const rMinorText = (rMid + rInner) / 2;
+                const xMin = cx + rMinorText * Math.cos(midAngle);
+                const yMin = cy + rMinorText * Math.sin(midAngle);
+                const labelMin = state.useFlats ? item.minorFlat : item.minorSharp;
+
+                const textMinEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                textMinEl.setAttribute('x', xMin);
+                textMinEl.setAttribute('y', yMin + 3);
+                textMinEl.setAttribute('text-anchor', 'middle');
+                textMinEl.setAttribute('font-size', '9');
+                textMinEl.setAttribute('font-weight', '700');
+                textMinEl.setAttribute('fill', chromaMin.textDark ? '#111827' : '#ffffff');
+                textMinEl.setAttribute('pointer-events', 'none');
+                textMinEl.textContent = labelMin;
+                svg.appendChild(textMinEl);
+            });
+
+            const activeChroma = CHROMA_NOTES[activeRootPC];
+            const hubCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            hubCircle.setAttribute('cx', cx);
+            hubCircle.setAttribute('cy', cy);
+            hubCircle.setAttribute('r', rInner);
+            hubCircle.setAttribute('fill', activeChroma.hex);
+            hubCircle.setAttribute('stroke', '#ffffff');
+            hubCircle.setAttribute('stroke-width', '2.5');
+            svg.appendChild(hubCircle);
+
+            const pitchNames = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+            const centerTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            centerTitle.setAttribute('x', cx);
+            centerTitle.setAttribute('y', cy - 3);
+            centerTitle.setAttribute('text-anchor', 'middle');
+            centerTitle.setAttribute('font-size', '15');
+            centerTitle.setAttribute('font-weight', '800');
+            centerTitle.setAttribute('fill', activeChroma.textDark ? '#111827' : '#ffffff');
+            centerTitle.textContent = pitchNames[activeRootPC];
+            svg.appendChild(centerTitle);
+
+            const centerSub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            centerSub.setAttribute('x', cx);
+            centerSub.setAttribute('y', cy + 12);
+            centerSub.setAttribute('text-anchor', 'middle');
+            centerSub.setAttribute('font-size', '8');
+            centerSub.setAttribute('font-weight', '800');
+            centerSub.setAttribute('fill', activeChroma.textDark ? '#111827' : '#ffffff');
+            centerSub.textContent = isMinorQuality ? 'MINOR' : 'MAJOR';
+            svg.appendChild(centerSub);
+        }
+
+        function createArcSvgPath(cx, cy, rIn, rOut, startAngle, endAngle) {
+            const x1Out = cx + rOut * Math.cos(startAngle);
+            const y1Out = cy + rOut * Math.sin(startAngle);
+            const x2Out = cx + rOut * Math.cos(endAngle);
+            const y2Out = cy + rOut * Math.sin(endAngle);
+
+            const x1In = cx + rIn * Math.cos(endAngle);
+            const y1In = cy + rIn * Math.sin(endAngle);
+            const x2In = cx + rIn * Math.cos(startAngle);
+            const y2In = cy + rIn * Math.sin(startAngle);
+
+            const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
+
+            return [
+                `M ${x1Out} ${y1Out}`,
+                `A ${rOut} ${rOut} 0 ${largeArcFlag} 1 ${x2Out} ${y2Out}`,
+                `L ${x1In} ${y1In}`,
+                `A ${rIn} ${rIn} 0 ${largeArcFlag} 0 ${x2In} ${y2In}`,
+                'Z'
+            ].join(' ');
+        }
+
+        // --- FRETBOARD RENDER ENGINE ---
+        function renderFretboard() {
+            const container = document.getElementById('fretboard-container');
+            container.innerHTML = '';
+
+            const stringCount = state.is13Strings ? 13 : 6;
+            const tuningObj = state.is13Strings 
+                ? { midi: PERFECT_FOURTHS_13_MIDI, labels: PERFECT_FOURTHS_13_LABELS } 
+                : TUNINGS[state.tuningKey];
+            
+            const singleDots = [3, 5, 7, 9, 15, 17];
+            const doubleDots = [12];
+
+            const stringOrder = Array.from({ length: stringCount }, (_, i) => i);
+
+            const boardEl = document.createElement('div');
+            boardEl.className = 'fretboard-neck rounded-2xl overflow-hidden border border-gray-900 shadow-2xl relative flex flex-col';
+
+            const fretHeaderRow = document.createElement('div');
+            fretHeaderRow.className = 'flex border-b border-gray-800 bg-gray-900/90 text-gray-400 text-xs font-semibold py-1.5';
+            
+            const headerLabelBox = document.createElement('div');
+            headerLabelBox.className = 'w-28 shrink-0 px-3 text-center text-gray-400 uppercase text-[10px] font-bold tracking-wider self-center';
+            headerLabelBox.textContent = state.is13Strings ? '13 Strings (4ths)' : 'String';
+            fretHeaderRow.appendChild(headerLabelBox);
+
+            for (let f = 0; f <= NUM_FRETS; f++) {
+                const fCell = document.createElement('div');
+                fCell.className = `flex-1 text-center font-mono ${f === 0 ? 'w-12 shrink-0 border-r-2 border-yellow-500/80 text-yellow-400 font-bold' : ''}`;
+                fCell.textContent = f === 0 ? 'Nut' : f;
+                fretHeaderRow.appendChild(fCell);
+            }
+            boardEl.appendChild(fretHeaderRow);
+
+            if (state.capo > 0) {
+                const capoLine = document.createElement('div');
+                capoLine.className = 'absolute top-8 bottom-0 w-3 bg-gradient-to-r from-amber-400 to-yellow-600 shadow-2xl border-x border-yellow-200 z-30 pointer-events-none rounded-sm';
+                capoLine.style.left = `calc(7rem + ${(state.capo) * 4.9}%)`;
+                boardEl.appendChild(capoLine);
+            }
+
+            const activeNotes = getActiveNotesList();
+            const primaryRootPC = (state.designatedRoot !== null) 
+                ? state.designatedRoot 
+                : (state.mode === 'theory' ? state.theoryRoot : (activeNotes.length > 0 ? activeNotes[0].pitchClass : 0));
+
+            stringOrder.forEach(sIdx => {
+                const stringRow = document.createElement('div');
+                stringRow.className = `flex items-center ${state.is13Strings ? 'h-9' : 'h-11'} relative border-b border-gray-800/40`;
+
+                const baseMidi = tuningObj.midi[sIdx] + state.capo;
+                const stringLabel = tuningObj.labels[sIdx];
+                const isMuted = (state.singleNotes[sIdx] === -1);
+
+                const stringBadge = document.createElement('div');
+                stringBadge.className = `w-28 shrink-0 px-2 flex items-center justify-between cursor-pointer transition-all z-20 ${isMuted ? 'text-gray-500' : 'text-indigo-300 font-bold'}`;
+                stringBadge.innerHTML = `
+                    <span class="text-xs font-semibold tracking-tight truncate">${stringLabel}</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${isMuted ? 'bg-rose-600/30 text-rose-300 border border-rose-500/50' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+                        ${isMuted ? 'X' : 'ON'}
+                    </span>
+                `;
+
+                stringBadge.addEventListener('click', () => {
+                    if (state.mode === 'custom' && state.polyphony === 'multi') {
+                        const key = `${sIdx}-0`;
+                        if (state.multiNotes.has(key)) {
+                            state.multiNotes.delete(key);
+                        } else {
+                            state.multiNotes.set(key, true);
+                            synth.playPluck(baseMidi);
+                        }
+                    } else {
+                        state.singleNotes[sIdx] = isMuted ? 0 : -1;
+                    }
+                    renderFretboard();
+                    updateAnalysisAndUI();
+                });
+                stringRow.appendChild(stringBadge);
+
+                const stringWire = document.createElement('div');
+                stringWire.className = 'absolute left-28 right-0 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-300 z-10 pointer-events-none string-line';
+                stringWire.style.height = `${Math.max(1, 4.5 - (sIdx * (3.5 / stringCount)))}px`;
+                stringRow.appendChild(stringWire);
+
+                for (let f = 0; f <= NUM_FRETS; f++) {
+                    const fretCell = document.createElement('div');
+                    fretCell.className = `flex-1 h-full flex items-center justify-center relative cursor-pointer group z-20 ${
+                        f === 0 ? 'w-12 shrink-0 border-r-4 border-gray-300 bg-gray-900/60' : 'border-r-2 border-gray-500/60 fret-wire'
+                    }`;
+
+                    const noteMidi = baseMidi + f;
+                    const pitchClass = noteMidi % 12;
+
+                    let isActive = false;
+                    let isRootNote = false;
+
+                    if (state.mode === 'chord') {
+                        if (state.chordDisplayMode === 'voicing') {
+                            isActive = (state.singleNotes[sIdx] === f);
+                        } else {
+                            const def = CHORD_DEFINITIONS.find(d => d.id === state.chordType) || CHORD_DEFINITIONS[0];
+                            const relInterval = (pitchClass - state.chordRoot + 12) % 12;
+                            isActive = def.formula.includes(relInterval) && !isMuted;
+                        }
+                    } else if (state.mode === 'custom') {
+                        if (state.polyphony === 'single') {
+                            isActive = (state.singleNotes[sIdx] === f);
+                        } else {
+                            isActive = state.multiNotes.has(`${sIdx}-${f}`);
+                        }
+                    } else if (state.mode === 'theory') {
+                        const categoryPattern = THEORY_PATTERNS[state.theoryCategory][state.theoryPatternKey];
+                        const intervalFromRoot = (pitchClass - state.theoryRoot + 12) % 12;
+                        if (categoryPattern && categoryPattern.includes(intervalFromRoot) && !isMuted) {
+                            isActive = true;
+                        }
+                    }
+
+                    if (pitchClass === primaryRootPC && isActive) {
+                        isRootNote = true;
+                    }
+
+                    if (f === 0 && isMuted && (state.mode !== 'custom' || state.polyphony === 'single') && !isActive) {
+                        const muteNode = document.createElement('div');
+                        muteNode.className = 'w-5 h-5 rounded-md bg-rose-900/80 border border-rose-500 text-rose-300 text-[10px] font-black flex items-center justify-center shadow-inner z-30';
+                        muteNode.textContent = 'X';
+                        fretCell.appendChild(muteNode);
+                    } else if (isActive) {
+                        const chroma = CHROMA_NOTES[pitchClass];
+                        const noteNode = document.createElement('div');
+                        const labelContent = getNoteLabelText(noteMidi, pitchClass, f, primaryRootPC);
+
+                        const textColorClass = chroma.textDark ? 'text-gray-900 font-extrabold' : 'text-white font-extrabold';
+                        const pulseEffect = isRootNote ? 'ring-2 ring-white root-pulse' : '';
+
+                        const sizeClass = state.labelDisplay === 'both' ? 'px-1.5 h-6 min-w-[2.1rem] text-[9px] tracking-tight' : 'w-6 h-6 text-[10px]';
+
+                        noteNode.className = `${sizeClass} rounded-full flex items-center justify-center shadow-lg note-dot z-30 ${textColorClass} ${pulseEffect}`;
+                        noteNode.style.backgroundColor = chroma.hex;
+                        noteNode.style.boxShadow = `0 3px 8px ${chroma.hex}66`;
+                        noteNode.innerHTML = labelContent;
+                        fretCell.appendChild(noteNode);
+                    }
+
+                    fretCell.addEventListener('click', (e) => {
+                        e.stopPropagation();
+
+                        if (f === 0) {
+                            if (state.mode === 'custom' && state.polyphony === 'multi') {
+                                const key = `${sIdx}-0`;
+                                if (state.clickAction === 'root') {
+                                    state.designatedRoot = pitchClass;
+                                } else {
+                                    if (state.multiNotes.has(key)) state.multiNotes.delete(key);
+                                    else {
+                                        state.multiNotes.set(key, true);
+                                        synth.playPluck(noteMidi);
+                                    }
+                                }
+                            } else {
+                                state.singleNotes[sIdx] = (state.singleNotes[sIdx] === 0) ? -1 : 0;
+                                if (state.singleNotes[sIdx] === 0) synth.playPluck(noteMidi);
+                            }
+                            renderFretboard();
+                            updateAnalysisAndUI();
+                            return;
+                        }
+
+                        if (e.shiftKey) {
+                            state.designatedRoot = pitchClass;
+                            synth.playPluck(noteMidi);
+                            renderFretboard();
+                            updateAnalysisAndUI();
+                            return;
+                        }
+
+                        synth.playPluck(noteMidi);
+
+                        if (state.mode === 'custom' || state.mode === 'chord') {
+                            if (state.clickAction === 'root') {
+                                state.designatedRoot = pitchClass;
+                            } else {
+                                state.mode = 'custom';
+                                if (state.polyphony === 'single') {
+                                    state.singleNotes[sIdx] = (state.singleNotes[sIdx] === f) ? -1 : f;
+                                } else {
+                                    const key = `${sIdx}-${f}`;
+                                    if (state.multiNotes.has(key)) state.multiNotes.delete(key);
+                                    else state.multiNotes.set(key, true);
+                                }
+                            }
+                            renderFretboard();
+                            updateAnalysisAndUI();
+                        }
+                    });
+
+                    fretCell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        state.designatedRoot = pitchClass;
+                        synth.playPluck(noteMidi);
+                        renderFretboard();
+                        updateAnalysisAndUI();
+                    });
+
+                    stringRow.appendChild(fretCell);
+                }
+
+                boardEl.appendChild(stringRow);
+            });
+
+            const markerFooterRow = document.createElement('div');
+            markerFooterRow.className = 'flex bg-gray-950/80 py-2 border-t border-gray-800';
+            markerFooterRow.appendChild(document.createElement('div')).className = 'w-28 shrink-0';
+
+            for (let f = 0; f <= NUM_FRETS; f++) {
+                const mCell = document.createElement('div');
+                mCell.className = `flex-1 flex justify-center items-center ${f === 0 ? 'w-12 shrink-0' : ''}`;
+                if (singleDots.includes(f)) {
+                    mCell.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-gray-500/70 shadow-inner inline-block"></span>`;
+                } else if (doubleDots.includes(f)) {
+                    mCell.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-indigo-400/80 shadow-inner inline-block mr-1"></span><span class="w-2.5 h-2.5 rounded-full bg-indigo-400/80 shadow-inner inline-block"></span>`;
+                }
+                markerFooterRow.appendChild(mCell);
+            }
+            boardEl.appendChild(markerFooterRow);
+
+            container.appendChild(boardEl);
+        }
+
+        function getNoteLabelText(midiNote, pitchClass, fretNum, primaryRootPC) {
+            const pitchArr = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+            const noteName = pitchArr[pitchClass];
+            const interval = (pitchClass - primaryRootPC + 12) % 12;
+            const intervalName = INTERVAL_NAMES[interval] || '1';
+
+            if (state.labelDisplay === 'notes') return noteName;
+            if (state.labelDisplay === 'intervals') return intervalName;
+            if (state.labelDisplay === 'both') {
+                return `<span>${noteName}</span><span style="margin-left: 1px; opacity: 0.9; font-size: 0.8em;">${intervalName}</span>`;
+            }
+            if (state.labelDisplay === 'frets') return fretNum.toString();
+            if (state.labelDisplay === 'octaves') {
+                const octave = Math.floor(midiNote / 12) - 1;
+                return `${noteName}${octave}`;
+            }
+            return noteName;
+        }
+
+        function getActiveNotesList() {
+            const stringCount = state.is13Strings ? 13 : 6;
+            const tuningObj = state.is13Strings 
+                ? { midi: PERFECT_FOURTHS_13_MIDI, labels: PERFECT_FOURTHS_13_LABELS } 
+                : TUNINGS[state.tuningKey];
+            const pitchNames = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+            const activeList = [];
+
+            if (state.mode === 'chord' && state.chordDisplayMode === 'all') {
+                const def = CHORD_DEFINITIONS.find(d => d.id === state.chordType) || CHORD_DEFINITIONS[0];
+                for (let s = 0; s < stringCount; s++) {
+                    if (state.singleNotes[s] === -1) continue;
+                    for (let f = 0; f <= NUM_FRETS; f++) {
+                        const midi = tuningObj.midi[s] + state.capo + f;
+                        const pc = midi % 12;
+                        const relInterval = (pc - state.chordRoot + 12) % 12;
+                        if (def.formula.includes(relInterval)) {
+                            activeList.push({ string: s, fret: f, midi: midi, pitchClass: pc, noteName: pitchNames[pc] });
+                        }
+                    }
+                }
+            } else if (state.mode === 'custom' || state.mode === 'chord') {
+                if (state.polyphony === 'single') {
+                    for (let s = 0; s < stringCount; s++) {
+                        const fret = state.singleNotes[s];
+                        if (fret >= 0) {
+                            const midi = tuningObj.midi[s] + state.capo + fret;
+                            activeList.push({ string: s, fret: fret, midi: midi, pitchClass: midi % 12, noteName: pitchNames[midi % 12] });
+                        }
+                    }
+                } else {
+                    state.multiNotes.forEach((val, key) => {
+                        const [s, f] = key.split('-').map(Number);
+                        const midi = tuningObj.midi[s] + state.capo + f;
+                        activeList.push({ string: s, fret: f, midi: midi, pitchClass: midi % 12, noteName: pitchNames[midi % 12] });
+                    });
+                }
+            } else if (state.mode === 'theory') {
+                const categoryPattern = THEORY_PATTERNS[state.theoryCategory][state.theoryPatternKey];
+                for (let s = 0; s < stringCount; s++) {
+                    if (state.singleNotes[s] === -1) continue;
+                    for (let f = 0; f <= NUM_FRETS; f++) {
+                        const midi = tuningObj.midi[s] + state.capo + f;
+                        const pc = midi % 12;
+                        const intervalFromRoot = (pc - state.theoryRoot + 12) % 12;
+                        if (categoryPattern && categoryPattern.includes(intervalFromRoot)) {
+                            activeList.push({ string: s, fret: f, midi: midi, pitchClass: pc, noteName: pitchNames[pc] });
+                        }
+                    }
+                }
+            }
+
+            return activeList.sort((a, b) => a.midi - b.midi);
+        }
+
+        // --- REAL-TIME CHORD RECOGNITION ENGINE ---
+        function analyzeChord(activeNotes) {
+            if (activeNotes.length === 0) {
+                return { title: 'No Notes Picked', rootName: '--', quality: 'None', bassName: '--', pitchClassesStr: '--', formulaStr: '--', alternatives: [] };
+            }
+
+            const pitchNames = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+            const uniquePitchClasses = [...new Set(activeNotes.map(n => n.pitchClass))].sort((a, b) => a - b);
+            const bassNote = activeNotes[0];
+            const pitchClassesStr = uniquePitchClasses.map(pc => pitchNames[pc]).join(', ');
+
+            if (uniquePitchClasses.length === 1) {
+                const singleName = pitchNames[uniquePitchClasses[0]];
+                return { title: `${singleName} (Single Note)`, rootName: singleName, quality: 'Single Pitch', bassName: bassNote.noteName, pitchClassesStr: pitchClassesStr, formulaStr: '1', alternatives: [] };
+            }
+
+            const candidateMatches = [];
+
+            const searchRoots = (state.designatedRoot !== null) 
+                ? [state.designatedRoot, ...uniquePitchClasses.filter(pc => pc !== state.designatedRoot)] 
+                : uniquePitchClasses;
+
+            searchRoots.forEach(rootPc => {
+                const relIntervals = uniquePitchClasses.map(pc => (pc - rootPc + 12) % 12).sort((a, b) => a - b);
+
+                CHORD_DEFINITIONS.forEach(def => {
+                    const formula = def.formula.map(i => i % 12);
+                    const matchCount = formula.filter(inv => relIntervals.includes(inv)).length;
+                    const extraNotes = relIntervals.filter(inv => !formula.includes(inv)).length;
+                    const missing5th = (formula.includes(7) && !relIntervals.includes(7) && formula.length >= 4);
+
+                    let isMatch = false;
+                    if (relIntervals.length === formula.length && matchCount === formula.length && extraNotes === 0) {
+                        isMatch = true;
+                    } else if (missing5th && (matchCount === formula.length - 1) && extraNotes === 0) {
+                        isMatch = true;
+                    }
+
+                    if (isMatch) {
+                        const rootName = pitchNames[rootPc];
+                        const isSlash = (rootPc !== bassNote.pitchClass);
+                        const fullTitle = `${rootName}${def.abbr}${isSlash ? '/' + bassNote.noteName : ''}`;
+
+                        let score = 100;
+                        if (state.designatedRoot !== null && rootPc === state.designatedRoot) score += 500;
+                        if (!isSlash) score += 20;
+                        if (!missing5th) score += 10;
+
+                        candidateMatches.push({
+                            title: fullTitle,
+                            rootName: rootName,
+                            quality: def.quality,
+                            bassName: bassNote.noteName,
+                            formulaStr: relIntervals.map(i => INTERVAL_NAMES[i] || i).join(' - '),
+                            score: score
+                        });
+                    }
+                });
+            });
+
+            candidateMatches.sort((a, b) => b.score - a.score);
+
+            if (candidateMatches.length > 0) {
+                const best = candidateMatches[0];
+                const alts = candidateMatches.slice(1).map(c => c.title);
+                return {
+                    title: best.title,
+                    rootName: best.rootName,
+                    quality: best.quality,
+                    bassName: best.bassName,
+                    pitchClassesStr: pitchClassesStr,
+                    formulaStr: best.formulaStr,
+                    alternatives: [...new Set(alts)]
+                };
+            }
+
+            const fallbackRoot = (state.designatedRoot !== null) ? pitchNames[state.designatedRoot] : bassNote.noteName;
+            const refRootPC = (state.designatedRoot !== null) ? state.designatedRoot : bassNote.pitchClass;
+            const relIntervals = uniquePitchClasses.map(pc => (pc - refRootPC + 12) % 12);
+            
+            return {
+                title: `${fallbackRoot} Cluster`,
+                rootName: fallbackRoot,
+                quality: 'Custom Shape',
+                bassName: bassNote.noteName,
+                pitchClassesStr: pitchClassesStr,
+                formulaStr: relIntervals.map(i => INTERVAL_NAMES[i] || i).join(' - '),
+                alternatives: []
+            };
+        }
+
+        function updateAnalysisAndUI() {
+            const activeNotes = getActiveNotesList();
+            const analysis = analyzeChord(activeNotes);
+            const pitchNames = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+
+            document.getElementById('chord-title').textContent = analysis.title;
+            document.getElementById('chord-badge-root').textContent = analysis.rootName;
+            document.getElementById('chord-badge-type').textContent = analysis.quality.substring(0, 11);
+            document.getElementById('info-quality').textContent = analysis.quality;
+            document.getElementById('info-bass').textContent = analysis.bassName;
+            document.getElementById('info-pitches').textContent = analysis.pitchClassesStr;
+            document.getElementById('info-formula').textContent = analysis.formulaStr;
+
+            const primaryRootPC = (state.designatedRoot !== null) 
+                ? state.designatedRoot 
+                : (state.mode === 'theory' ? state.theoryRoot : (activeNotes.length > 0 ? activeNotes[0].pitchClass : 0));
+            
+            const chroma = CHROMA_NOTES[primaryRootPC];
+            const badgeBox = document.getElementById('chord-badge-box');
+            if (badgeBox && chroma) {
+                badgeBox.style.backgroundColor = chroma.hex;
+                badgeBox.style.borderColor = chroma.hex;
+                badgeBox.className = `w-16 h-16 rounded-2xl border flex flex-col items-center justify-center font-bold shrink-0 shadow-lg ${chroma.textDark ? 'text-gray-900' : 'text-white'}`;
+            }
+
+            const rootBadgeNote = document.getElementById('root-badge-note');
+            if (state.designatedRoot !== null) {
+                rootBadgeNote.textContent = `${pitchNames[state.designatedRoot]}`;
+                rootBadgeNote.parentElement.className = "text-[10px] px-2 py-0.5 rounded-md bg-rose-500/30 text-rose-300 border border-rose-500/50 font-bold shadow-sm";
+            } else {
+                rootBadgeNote.textContent = "Auto";
+                rootBadgeNote.parentElement.className = "text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold";
+            }
+
+            const subtitleText = document.getElementById('chord-subtitle-text');
+            if (state.mode === 'chord') {
+                subtitleText.textContent = `Chord Selector: ${pitchNames[state.chordRoot]} ${CHORD_DEFINITIONS.find(d => d.id === state.chordType)?.name || ''}`;
+            } else if (state.mode === 'custom') {
+                subtitleText.textContent = `Right-click or Shift-click any note to set Root Note • Click Nut to Mute/Add Note`;
+            } else {
+                subtitleText.textContent = `Preset: ${state.theoryPatternKey} in ${pitchNames[state.theoryRoot]}`;
+            }
+
+            const altContainer = document.getElementById('alt-chords-container');
+            const altList = document.getElementById('alt-chords-list');
+            altList.innerHTML = '';
+
+            if (analysis.alternatives && analysis.alternatives.length > 0) {
+                altContainer.classList.remove('hidden');
+                analysis.alternatives.slice(0, 5).forEach(altTitle => {
+                    const pill = document.createElement('span');
+                    pill.className = "px-2.5 py-1 rounded-lg bg-indigo-950/80 border border-indigo-700/50 text-indigo-300 text-xs font-semibold shadow-sm cursor-pointer hover:border-indigo-400";
+                    pill.textContent = altTitle;
+                    altList.appendChild(pill);
+                });
+            } else {
+                altContainer.classList.add('hidden');
+            }
+
+            renderCircleOfFifths();
+        }
+
+        function playActiveNotes(isArpeggio = false) {
+            const activeNotes = getActiveNotesList();
+            if (activeNotes.length === 0) return;
+
+            const midiList = activeNotes.map(n => n.midi);
+
+            if (isArpeggio) {
+                const uniqueAscending = [...new Set(midiList)].sort((a, b) => a - b);
+                synth.strumNotes(uniqueAscending, 0.15);
+            } else {
+                synth.strumNotes(midiList, 0.035);
+            }
+        }
+
+        // --- EXPORT TO JPEG / VECTOR PDF FUNCTIONALITY ---
+        async function exportFretboard(format) {
+            const btnJpg = document.getElementById('export-jpg-btn');
+            const btnPdf = document.getElementById('export-pdf-btn');
+            const activeBtn = (format === 'pdf') ? btnPdf : btnJpg;
+            const originalHtml = activeBtn.innerHTML;
+
+            activeBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>Exporting...</span>`;
+
+            try {
+                const chordTitleText = document.getElementById('chord-title').textContent.trim();
+                const sanitizedTitle = chordTitleText.replace(/[^a-zA-Z0-9]/g, '_') || 'Fretboard';
+                const filename = `FretLab_Chroma_${sanitizedTitle}`;
+
+                if (format === 'jpeg' || format === 'jpg') {
+                    const exportTarget = document.getElementById('exportable-area');
+                    const canvas = await html2canvas(exportTarget, {
+                        backgroundColor: '#0b0f17',
+                        scale: 2,
+                        logging: false,
+                        useCORS: true
+                    });
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    const link = document.createElement('a');
+                    link.download = `${filename}.jpg`;
+                    link.href = imgData;
+                    link.click();
+                } else if (format === 'pdf') {
+                    generateVectorPDF(filename);
+                }
+            } catch (err) {
+                console.error('Export Error:', err);
+                alert('An error occurred while generating the export file.');
+            } finally {
+                activeBtn.innerHTML = originalHtml;
+            }
+        }
+
+        // --- NATIVE VECTOR PDF GENERATOR (SUPPORT 6 & 13 STRINGS) ---
+        function generateVectorPDF(filename) {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'pt',
+                format: 'a4'
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            // Background
+            pdf.setFillColor(11, 15, 23);
+            pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
+
+            // Header
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(18);
+            pdf.text('FretLab Studio', 30, 36);
+
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(156, 163, 175);
+            pdf.text(`CHROMA-NOTES™ VECTOR HARMONY MAP (${state.is13Strings ? '13 STRINGS 4THS' : 'STANDARD'})`, 160, 36);
+
+            // Active Analysis
+            const activeNotes = getActiveNotesList();
+            const analysis = analyzeChord(activeNotes);
+            const pitchNames = state.useFlats ? PITCH_CLASSES_FLAT : PITCH_CLASSES_SHARP;
+
+            const primaryRootPC = (state.designatedRoot !== null) 
+                ? state.designatedRoot 
+                : (state.mode === 'theory' ? state.theoryRoot : (activeNotes.length > 0 ? activeNotes[0].pitchClass : 0));
+            const rootChroma = CHROMA_NOTES[primaryRootPC];
+
+            // Primary Card Box
+            pdf.setFillColor(17, 24, 39);
+            pdf.setDrawColor(31, 41, 55);
+            pdf.roundedRect(30, 48, pdfWidth - 60, 60, 6, 6, 'FD');
+
+            // Chord Badge Icon
+            pdf.setFillColor(rootChroma.hex);
+            pdf.roundedRect(40, 54, 48, 48, 6, 6, 'F');
+            pdf.setTextColor(rootChroma.textDark ? 17 : 255, rootChroma.textDark ? 24 : 255, rootChroma.textDark ? 39 : 255);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(18);
+            pdf.text(analysis.rootName, 64, 80, { align: 'center' });
+            pdf.setFontSize(6);
+            pdf.text(analysis.quality.substring(0, 10).toUpperCase(), 64, 92, { align: 'center' });
+
+            // Main Chord Title
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(18);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(analysis.title, 98, 76);
+
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(165, 180, 252);
+            const tuningName = state.is13Strings ? 'Perfect 4ths (13-String)' : (TUNINGS[state.tuningKey]?.name || 'Standard');
+            pdf.text(`Tuning: ${tuningName} ${state.capo > 0 ? '| Capo: Fret ' + state.capo : ''}`, 98, 92);
+
+            // Harmonic Stats
+            const statsX = 380;
+            pdf.setFontSize(8);
+            pdf.setTextColor(156, 163, 175);
+            pdf.text('QUALITY', statsX, 64);
+            pdf.text('BASS NOTE', statsX + 90, 64);
+            pdf.text('PITCHES', statsX + 170, 64);
+            pdf.text('FORMULA', statsX + 270, 64);
+
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(243, 244, 246);
+            pdf.text(analysis.quality, statsX, 78);
+            pdf.text(analysis.bassName, statsX + 90, 78);
+            pdf.setTextColor(165, 180, 252);
+            pdf.text(analysis.pitchClassesStr, statsX + 170, 78);
+            pdf.setTextColor(251, 191, 36);
+            pdf.text(analysis.formulaStr, statsX + 270, 78);
+
+            // --- FRETBOARD DRAWING ---
+            const startX = 85;
+            const startY = 135;
+            const boardWidth = pdfWidth - 115;
+            const fretCount = NUM_FRETS;
+            const stringCount = state.is13Strings ? 13 : 6;
+            const rowHeight = state.is13Strings ? 18 : 32;
+            const boardHeight = (stringCount - 1) * rowHeight;
+            const nutWidth = 18;
+            const fretWidth = (boardWidth - nutWidth) / fretCount;
+
+            // Fretboard Background
+            pdf.setFillColor(30, 22, 18);
+            pdf.rect(startX, startY, boardWidth, boardHeight, 'F');
+
+            // Nut & Frets
+            pdf.setDrawColor(229, 231, 235);
+            pdf.setLineWidth(3);
+            pdf.line(startX + nutWidth, startY - 2, startX + nutWidth, startY + boardHeight + 2);
+
+            pdf.setDrawColor(107, 114, 128);
+            pdf.setLineWidth(0.8);
+            for (let f = 1; f <= fretCount; f++) {
+                const fx = startX + nutWidth + f * fretWidth;
+                pdf.line(fx, startY, fx, startY + boardHeight);
+            }
+
+            // Fret Numbers
+            const singleDots = [3, 5, 7, 9, 15, 17];
+            const doubleDots = [12];
+
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(8);
+            pdf.setTextColor(156, 163, 175);
+
+            for (let f = 0; f <= fretCount; f++) {
+                const fx = f === 0 ? startX + (nutWidth / 2) : startX + nutWidth + (f - 0.5) * fretWidth;
+                pdf.text(f === 0 ? '0' : `${f}`, fx, startY - 6, { align: 'center' });
+
+                if (singleDots.includes(f)) {
+                    pdf.setFillColor(75, 85, 99);
+                    pdf.circle(fx, startY + boardHeight + 10, 2.5, 'F');
+                } else if (doubleDots.includes(f)) {
+                    pdf.setFillColor(129, 140, 248);
+                    pdf.circle(fx - 3, startY + boardHeight + 10, 2.5, 'F');
+                    pdf.circle(fx + 3, startY + boardHeight + 10, 2.5, 'F');
+                }
+            }
+
+            // Capo
+            if (state.capo > 0 && state.capo <= NUM_FRETS) {
+                const capoX = startX + nutWidth + (state.capo - 0.5) * fretWidth;
+                pdf.setFillColor(245, 158, 11);
+                pdf.roundedRect(capoX - 3, startY - 3, 6, boardHeight + 6, 2, 2, 'F');
+            }
+
+            // Strings & Notes
+            const tuningObj = state.is13Strings 
+                ? { midi: PERFECT_FOURTHS_13_MIDI, labels: PERFECT_FOURTHS_13_LABELS } 
+                : TUNINGS[state.tuningKey];
+
+            for (let s = 0; s < stringCount; s++) {
+                const sy = startY + s * rowHeight;
+                const isMuted = (state.singleNotes[s] === -1);
+
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(state.is13Strings ? 7 : 8);
+                pdf.setTextColor(isMuted ? 107 : 229, isMuted ? 114 : 231, isMuted ? 128 : 235);
+                pdf.text(tuningObj.labels[s], startX - 8, sy + 2.5, { align: 'right' });
+
+                pdf.setDrawColor(209, 213, 219);
+                pdf.setLineWidth(Math.max(0.5, 2.5 - (s * (2 / stringCount))));
+                pdf.line(startX, sy, startX + boardWidth, sy);
+            }
+
+            for (let s = 0; s < stringCount; s++) {
+                const sy = startY + s * rowHeight;
+                const baseMidi = tuningObj.midi[s] + state.capo;
+                const isMuted = (state.singleNotes[s] === -1);
+
+                if (isMuted && (state.mode !== 'custom' || state.polyphony === 'single')) {
+                    const nx = startX + (nutWidth / 2);
+                    pdf.setFillColor(153, 27, 27);
+                    pdf.roundedRect(nx - 5, sy - 5, 10, 10, 2, 2, 'F');
+                    pdf.setTextColor(254, 202, 202);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(7);
+                    pdf.text('X', nx, sy + 2, { align: 'center' });
+                    continue;
+                }
+
+                for (let f = 0; f <= fretCount; f++) {
+                    const noteMidi = baseMidi + f;
+                    const pitchClass = noteMidi % 12;
+
+                    let isActive = false;
+                    if (state.mode === 'chord') {
+                        if (state.chordDisplayMode === 'voicing') {
+                            isActive = (state.singleNotes[s] === f);
+                        } else {
+                            const def = CHORD_DEFINITIONS.find(d => d.id === state.chordType) || CHORD_DEFINITIONS[0];
+                            const relInterval = (pitchClass - state.chordRoot + 12) % 12;
+                            isActive = def.formula.includes(relInterval) && !isMuted;
+                        }
+                    } else if (state.mode === 'custom') {
+                        if (state.polyphony === 'single') {
+                            isActive = (state.singleNotes[s] === f);
+                        } else {
+                            isActive = state.multiNotes.has(`${s}-${f}`);
+                        }
+                    } else if (state.mode === 'theory') {
+                        const categoryPattern = THEORY_PATTERNS[state.theoryCategory][state.theoryPatternKey];
+                        const intervalFromRoot = (pitchClass - state.theoryRoot + 12) % 12;
+                        if (categoryPattern && categoryPattern.includes(intervalFromRoot) && !isMuted) {
+                            isActive = true;
+                        }
+                    }
+
+                    if (isActive) {
+                        const chroma = CHROMA_NOTES[pitchClass];
+                        const nx = f === 0 ? startX + (nutWidth / 2) : startX + nutWidth + (f - 0.5) * fretWidth;
+                        const isRootNote = (pitchClass === primaryRootPC);
+
+                        const circleRadius = state.is13Strings ? 7 : 10;
+                        pdf.setFillColor(chroma.hex);
+                        pdf.circle(nx, sy, circleRadius, 'F');
+
+                        if (isRootNote) {
+                            pdf.setDrawColor(255, 255, 255);
+                            pdf.setLineWidth(1.2);
+                            pdf.circle(nx, sy, circleRadius + 1.2, 'S');
+                        }
+
+                        const labelText = getNoteLabelText(noteMidi, pitchClass, f, primaryRootPC);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(state.is13Strings ? 6 : 7.5);
+                        pdf.setTextColor(chroma.textDark ? 17 : 255, chroma.textDark ? 24 : 255, chroma.textDark ? 39 : 255);
+                        pdf.text(labelText.replace(/<[^>]*>/g, ''), nx, sy + 2, { align: 'center' });
+                    }
+                }
+            }
+
+            // Legend Footer
+            const legendY = pdfHeight - 25;
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(156, 163, 175);
+            pdf.text('CHROMA-NOTES™ LEGEND:', 30, legendY);
+
+            let legendX = 140;
+            for (let i = 0; i < 12; i++) {
+                const c = CHROMA_NOTES[i];
+                const pName = pitchNames[i];
+                pdf.setFillColor(c.hex);
+                pdf.roundedRect(legendX, legendY - 8, 22, 11, 2, 2, 'F');
+                pdf.setTextColor(c.textDark ? 17 : 255, c.textDark ? 24 : 255, c.textDark ? 39 : 255);
+                pdf.setFontSize(7);
+                pdf.text(pName, legendX + 11, legendY, { align: 'center' });
+                legendX += 26;
+            }
+
+            pdf.save(`${filename}.pdf`);
+        }
+    </script>
+
+</body></html>
